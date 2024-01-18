@@ -1,0 +1,59 @@
+<!-- postar-novidade.html -->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postar Novidade</title>
+</head>
+
+<body>
+
+    <h1>Postar Novidade</h1>
+
+    <form id="novidadeForm">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" required>
+
+        <label for="corpo">Corpo:</label>
+        <textarea id="corpo" name="corpo" required></textarea>
+
+        <label for="link">Link (opcional):</label>
+        <input type="text" id="link" name="link">
+
+        <button type="button" onclick="postarNovidade()">Postar Novidade</button>
+    </form>
+
+    <script>
+        function postarNovidade() {
+            const titulo = document.getElementById('titulo').value;
+            const corpo = document.getElementById('corpo').value;
+            const link = document.getElementById('link').value;
+
+            // Aqui você pode usar uma requisição AJAX para enviar os dados ao servidor
+            // por exemplo, usando o fetch ou XMLHttpRequest
+
+            fetch('/novidades', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ titulo, corpo, link }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Novidade postada com sucesso!');
+                    console.log('Resposta do servidor:', data);
+                })
+                .catch(error => {
+                    console.error('Erro ao postar novidade:', error);
+                    alert('Erro ao postar novidade. Verifique o console para mais informações.');
+                });
+        }
+    </script>
+
+</body>
+
+</html>

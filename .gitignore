@@ -1,0 +1,26 @@
+# Ignorar diretórios Node.js
+node_modules/
+
+# Ignorar arquivos de log
+logs
+*.log
+npm-debug.log*
+
+# Ignorar arquivos temporários
+*.tmp
+
+# Ignorar arquivos de build
+build/
+dist/
+out/
+
+# Ignorar arquivos de configuração
+.DS_Store
+.env
+
+# Ignorar arquivos específicos do seu editor (por exemplo, Visual Studio Code)
+.vscode/
+
+# Ignorar arquivos de dependência
+package-lock.json
+yarn.lock
