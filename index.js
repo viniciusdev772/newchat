@@ -7,7 +7,7 @@ const VerificacaoEmail = require("./models/VerificacaoEmail");
 const Usuario = require("./models/Usuario");
 const Novidade = require("./models/Novidade");
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 const novidadeController = require("./controllers/novidadeController");
 
