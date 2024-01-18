@@ -13,7 +13,7 @@ module.exports = {
       max_memory_restart: "1G", // Reinicie se o uso de memória exceder este valor
       env: {
         NODE_ENV: "production", // Ambiente de execução (produção, desenvolvimento, etc.)
-        PORT: 3000, // Porta na qual o aplicativo será executado
+        PORT: 3001, // Porta na qual o aplicativo será executado
       },
       log_date_format: "YYYY-MM-DD HH:mm Z", // Formato de data para os registros
       out_file: "logs/out.log", // Caminho para o arquivo de saída
