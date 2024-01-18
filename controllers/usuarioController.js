@@ -60,11 +60,12 @@ async function loginUsuario(req, res) {
   try {
     const { email, senha } = req.body;
     const usuario = await Usuario.findOne({
-      where: { email, senha, email_verificado: true, is_active: true },
+      where: { email, senha, email_verificado: true },
+      attributes: { exclude: ["senha"] }, // Exclui a senha dos resultados
     });
 
     if (usuario) {
-      res.json({ message: "Login bem-sucedido." });
+      res.json({ message: "Login bem-sucedido", usuario: usuario.toJSON() });
     } else {
       res
         .status(401)
