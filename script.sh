@@ -16,6 +16,9 @@ if [ "$alteracoes" != "Already up to date." ]; then
 
     # Instale as dependências com npm install
     npm install
+    pm2 delete all
+    pm2 start npm --name "nome_do_processo" -- start
+    pm2 save
 
     # Inicie o aplicativo com npm start
     npm start
