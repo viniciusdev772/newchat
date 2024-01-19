@@ -49,10 +49,10 @@ async function criarUsuario(req, res) {
 
     console.log("E-mail de ativação enviado:", info);
 
-    res.json(novoUsuario);
+    res.status(201).json(novoUsuario);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao criar usuário." });
+    res.status(500).json({ message: "Erro ao criar usuário." });
   }
 }
 
@@ -65,15 +65,15 @@ async function loginUsuario(req, res) {
     });
 
     if (usuario) {
-      res.json({ message: "Login bem-sucedido", usuario: usuario.toJSON() });
+      res.json({ message: "Login bem-sucedido", uid: usuario.uid });
     } else {
       res
         .status(401)
-        .json({ error: "Credenciais inválidas ou email não verificado." });
+        .json({ message: "Credenciais inválidas ou email não verificado." });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao fazer login." });
+    res.status(500).json({ message: "Erro ao fazer login." });
   }
 }
 
