@@ -11,8 +11,6 @@ const PORT = 3001;
 
 const novidadeController = require("./controllers/novidadeController");
 
-
-
 sequelize.sync().then(() => {
   console.log("Banco de dados sincronizado.");
 });
@@ -27,6 +25,8 @@ app.use(express.static("static"));
 
 const ejs = require("ejs");
 app.set("view engine", "ejs");
+
+const { verificarToken } = require("./middlewares/authMiddleware");
 
 // Rota para criar usuário
 app.post("/usuarios/novo", usuarioController.criarUsuario);
