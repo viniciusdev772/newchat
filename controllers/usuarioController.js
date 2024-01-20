@@ -1,6 +1,7 @@
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const pem = require("pem");
 const Usuario = require("../models/Usuario");
 const VerificacaoEmail = require("../models/VerificacaoEmail");
 const transporter = require("../mailer");
@@ -83,7 +84,7 @@ async function loginUsuario(req, res) {
     // Busca o usuário pelo email
     const usuario = await Usuario.findOne({
       where: { email },
-      attributes: ["senha", "email_verificado"],
+      attributes: ["senha", "email_verificado", "uid"],
     });
 
     if (usuario) {
@@ -91,31 +92,44 @@ async function loginUsuario(req, res) {
       const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
 
       if (senhaCorreta && usuario.email_verificado) {
-        // Gera um token JWT com o uid do usuário
+        // Carrega a chave privada do certificado PEM
+        const chavePrivadaPem = fs.readFileSync(
+          "./protected/privkey.pem",
+          "utf-8"
+        );
+
+        // Gera um token JWT com informações adicionais e assina com a chave privada do certificado PEM
         const token = jwt.sign(
-          { uid: usuario.uid },
-          "BPLx8mSebZAwxe6bIy5Uz3TkW3xE3rqX",
           {
+            uid: usuario.uid,
+            email: usuario.email,
+            iss: "sistema_de_autenticacao",
+            iat: Math.floor(Date.now() / 1000), // data de emissão em segundos
+          },
+          chavePrivadaPem, // Chave privada do certificado PEM
+          {
+            algorithm: "ES256", // Algoritmo de assinatura RSA
             expiresIn: "1h",
           }
         );
 
+        console.log("Token gerado:", token);
+        console.log("UID:", usuario.uid);
+        console.log("Email:", usuario.email);
+        console.log("Token decodificado:", jwt.decode(token));
+
         res.json({ sucesso: true, message: "Login bem-sucedido", token });
       } else {
-        res
-          .status(401)
-          .json({
-            sucesso: false,
-            message: "Credenciais inválidas ou email não verificado.",
-          });
-      }
-    } else {
-      res
-        .status(401)
-        .json({
+        res.status(401).json({
           sucesso: false,
           message: "Credenciais inválidas ou email não verificado.",
         });
+      }
+    } else {
+      res.status(401).json({
+        sucesso: false,
+        message: "Credenciais inválidas ou email não verificado.",
+      });
     }
   } catch (error) {
     console.error(error);
