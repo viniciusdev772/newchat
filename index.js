@@ -52,7 +52,7 @@ app.get("/ativar-conta/:token", async (req, res) => {
       return res.sendFile(__dirname + "/static/verificado.html");
     }
 
-    return res.status(404).send("Token de verificação inválido ou expirado.");
+    return res.sendFile(__dirname + "/static/erro.html");
   } catch (error) {
     console.error("Erro ao ativar conta:", error);
     res.status(500).send("Erro ao ativar conta.");
