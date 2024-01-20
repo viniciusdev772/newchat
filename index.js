@@ -49,7 +49,7 @@ app.get("/ativar-conta/:token", async (req, res) => {
       //exclui o token
       await VerificacaoEmail.destroy({ where: { token } });
 
-      return res.send("Conta ativada com sucesso.");
+      return res.sendFile(__dirname + "./static/verificado.html");
     }
 
     return res.status(404).send("Token de verificação inválido ou expirado.");

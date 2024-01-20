@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Confirmação de Ativação</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            overflow: hidden;
+            /* Evita a barra de rolagem horizontal durante a animação */
+            position: relative;
+            background-color: #f0f0f0;
+            /* Cor de fundo de sua escolha */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #my-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            /* Cor de fundo com transparência */
+            backdrop-filter: blur(10px);
+            /* Efeito de desfoque */
+            border-radius: 10px;
+            /* Borda arredondada */
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title,
+        .card-text {
+            color: #000;
+            /* Cor do texto preto */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            /* Cor do botão */
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="my-canvas"></canvas>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Confirmação de Ativação</h4>
+                <p class="card-text">Sua conta foi ativada com sucesso! Agora você pode aproveitar todos os recursos
+                    disponíveis.</p>
+                <button type="button" class="btn btn-primary">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti.js para a animação de confetes -->
+    <script src="./conf.js"></script>
+
+    <!-- Scripts do Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+
+        var confettiSettings = { target: 'my-canvas' };
+        var confetti = new ConfettiGenerator(confettiSettings);
+        confetti.render();
+
+    </script>
+</body>
+
+</html>
