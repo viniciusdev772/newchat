@@ -1,9 +1,11 @@
 // controllers/usuarioController.js
-
+const fs = require("fs");
 const Usuario = require("../models/Usuario");
 
 const VerificacaoEmail = require("../models/VerificacaoEmail");
 const transporter = require("../mailer");
+
+const htmlTemplate = fs.readFileSync("./static/email.html", "utf-8");
 
 function gerarUid() {
   // Função para gerar um uid aleatório
@@ -44,7 +46,10 @@ async function criarUsuario(req, res) {
       from: "suv@viniciusdev.com.br",
       to: email,
       subject: "Ativação de Conta",
-      text: `Olá! Clique no seguinte link para ativar sua conta: http://${dominioAtual}/ativar-conta/${token}`,
+      html: htmlTemplate.replace(
+        "link_ativacao",
+        `http://${dominioAtual}/ativar-conta/${token}`
+      ),
     });
 
     console.log("E-mail de ativação enviado:", info);

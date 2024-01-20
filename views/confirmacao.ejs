@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Conta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        .confirmation-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .question {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .btn-confirm {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="confirmation-box">
+        <h1><%= mensagem %></h1>
+        <div class="question">
+            <p>Você realmente deseja ativar sua conta?</p>
+            <form action="/confirmar-ativacao" method="post">
+                <input type="hidden" name="token" value="<%= token %>">
+                <button type="submit" class="btn-confirm">Sim, confirmar ativação</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
