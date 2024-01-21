@@ -76,9 +76,7 @@ app.get("/novidades", verificarToken, async (req, res) => {
   }
 });
 
-wss.on("headers", (headers, request) => {
-  headers.push("Access-Control-Allow-Origin: *"); // Ou ajuste para a origem desejada
-});
+// Remova a configuração do evento "headers" aqui, pois não é necessário para WebSocket
 
 wss.on("connection", (ws) => {
   Mensagem.findAll().then((mensagens) => {
