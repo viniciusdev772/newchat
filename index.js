@@ -76,6 +76,10 @@ app.get("/novidades", verificarToken, async (req, res) => {
   }
 });
 
+wss.on("headers", (headers, request) => {
+  headers.push("Access-Control-Allow-Origin: *"); // Ou ajuste para a origem desejada
+});
+
 wss.on("connection", (ws) => {
   Mensagem.findAll().then((mensagens) => {
     ws.send(JSON.stringify(mensagens));
