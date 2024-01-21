@@ -84,12 +84,19 @@ async function loginUsuario(req, res) {
     // Busca o usuário pelo email
     const usuario = await Usuario.findOne({
       where: { email },
-      attributes: ["senha", "email_verificado", "uid"],
     });
 
     if (usuario) {
       // Verifica se a senha fornecida é correta
       const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+
+      // verifica se o usuario foi banido e então mostra a mensagem de banido
+      if (usuario.is_banned == true) {
+        return res.status(403).json({
+          sucesso: false,
+          message: usuario.ban_message,
+        });
+      }
 
       if (senhaCorreta && usuario.email_verificado) {
         // Carrega a chave privada do certificado PEM

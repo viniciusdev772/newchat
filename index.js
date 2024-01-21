@@ -59,7 +59,7 @@ app.get("/ativar-conta/:token", async (req, res) => {
   }
 });
 
-app.get("/novidades", async (req, res) => {
+app.get("/novidades", verificarToken ,async (req, res) => {
   try {
     const novidades = await Novidade.findAll();
     res.json(novidades);

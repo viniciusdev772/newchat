@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const Usuario = require("../models/Usuario");
 
-function verificarToken(req, res, next) {
+async function verificarToken(req, res, next) {
   // Obtém o token do cabeçalho da requisição
   const token = req.headers.authorization;
 
@@ -18,14 +19,30 @@ function verificarToken(req, res, next) {
       token,
       chavePublicaPem,
       { algorithms: ["ES256"] },
-      (err, decoded) => {
+      async (err, decoded) => {
         if (err) {
           return res.status(403).json({ message: "Token inválido." });
         }
 
-        // Adiciona o UID decodificado à requisição para uso posterior
-        req.uid = decoded.uid;
-        next();
+        // Verifica se o UID está no banco de dados
+        try {
+          const usuario = await Usuario.findOne({ uid: decoded.uid });
+
+          if (!usuario) {
+            return res
+              .status(403)
+              .json({ message: "UID não encontrado no banco de dados." });
+          }
+
+          // Adiciona o UID decodificado à requisição para uso posterior
+          req.uid = decoded.uid;
+          next();
+        } catch (error) {
+          console.error(error);
+          return res
+            .status(500)
+            .json({ message: "Erro ao verificar o UID no banco de dados." });
+        }
       }
     );
   } catch (error) {
