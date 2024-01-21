@@ -78,24 +78,41 @@ app.get("/novidades", verificarToken, async (req, res) => {
 
 // Remova a configuração do evento "headers" aqui, pois não é necessário para WebSocket
 
+const MensagemData = {
+  conteudo: "",
+  uid_sender: "",
+  email_sender: "",
+  hora: 0, // Timestamp
+};
+
 wss.on("connection", (ws) => {
   Mensagem.findAll().then((mensagens) => {
     ws.send(JSON.stringify(mensagens));
   });
 
   ws.on("message", async (message) => {
-    const mensagemData = JSON.parse(message);
-    await Mensagem.create(mensagemData);
+    try {
+      // Verifique se a mensagem recebida está no formato correto
+      const mensagemData = Object.assign({}, MensagemData, JSON.parse(message));
 
-    // Envie mensagem para todos os clientes conectados, incluindo o remetente
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(mensagemData));
-      }
-    });
+      // Adicione a data de recebimento à mensagem
+      mensagemData.hora = Date.now();
+
+      // Registre a mensagem no banco de dados
+      await Mensagem.create(mensagemData);
+
+      // Envie mensagem para todos os clientes conectados, incluindo o remetente
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(mensagemData));
+        }
+      });
+    } catch (error) {
+      console.error("Erro ao processar a mensagem:", error);
+      // Trate o erro conforme necessário
+    }
   });
 });
-
 // Alteração aqui: Use o servidor criado com WebSocket para ouvir em vez do app.listen
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
