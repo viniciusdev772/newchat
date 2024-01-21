@@ -72,7 +72,7 @@ async function checker(req, res, next) {
       { algorithms: ["ES256"] },
       async (err, decoded) => {
         if (err) {
-          return res.status(403).json({ message: "Token inválido." });
+          return res.status(403).json({ valid : false, message: "Token inválido." });
         }
 
         // Verifica se o UID está no banco de dados
