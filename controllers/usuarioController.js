@@ -125,7 +125,12 @@ async function loginUsuario(req, res) {
         console.log("Email:", usuario.email);
         console.log("Token decodificado:", jwt.decode(token));
 
-        res.json({ sucesso: true, message: "Login bem-sucedido", token });
+        res.json({
+          sucesso: true,
+          message: "Login bem-sucedido",
+          token,
+          uid: usuario.uid,
+        });
       } else {
         res.status(401).json({
           sucesso: false,
