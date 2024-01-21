@@ -16,10 +16,12 @@
     "confetti-js": "^0.0.18",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.7.1",
     "nodemailer": "^6.9.8",
     "pem": "^1.14.8",
-    "sequelize": "^6.35.2"
+    "sequelize": "^6.35.2",
+    "ws": "^8.16.0"
   }
 }
