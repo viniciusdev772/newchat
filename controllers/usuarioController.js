@@ -129,6 +129,7 @@ async function loginUsuario(req, res) {
           sucesso: true,
           message: "Login bem-sucedido",
           token,
+          email: usuario.email,
           uid: usuario.uid,
         });
       } else {
