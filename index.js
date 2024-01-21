@@ -26,7 +26,7 @@ app.use(express.static("static"));
 const ejs = require("ejs");
 app.set("view engine", "ejs");
 
-const { verificarToken } = require("./middlewares/authMiddleware");
+const { verificarToken, checker } = require("./middlewares/authMiddleware");
 
 // Rota para criar usuário
 app.post("/usuarios/novo", usuarioController.criarUsuario);
@@ -59,7 +59,9 @@ app.get("/ativar-conta/:token", async (req, res) => {
   }
 });
 
-app.get("/novidades", verificarToken ,async (req, res) => {
+app.get("/check_jwt", checker);
+
+app.get("/novidades", verificarToken, async (req, res) => {
   try {
     const novidades = await Novidade.findAll();
     res.json(novidades);
