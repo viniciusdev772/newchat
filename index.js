@@ -10,6 +10,8 @@ const Mensagem = require("./models/Mensagem");
 const app = express();
 const PORT = 3001;
 
+const cors = require("cors");
+
 const WebSocket = require("ws");
 
 const http = require("http");
@@ -19,6 +21,8 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.server = server;
+
+app.use(cors());
 
 const novidadeController = require("./controllers/novidadeController");
 
