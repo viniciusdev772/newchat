@@ -7,6 +7,9 @@ const VerificacaoEmail = require("./models/VerificacaoEmail");
 const Usuario = require("./models/Usuario");
 const Novidade = require("./models/Novidade");
 const Mensagem = require("./models/Mensagem");
+const Grupo = require("./models/Grupo");
+const Participante = require("./models/Participante");
+const grupoController = require("./controllers/GruposController");
 const app = express();
 const PORT = 3001;
 
@@ -42,6 +45,8 @@ const { verificarToken, checker } = require("./middlewares/authMiddleware");
 app.post("/usuarios/novo", usuarioController.criarUsuario);
 app.post("/usuarios/login", usuarioController.loginUsuario);
 app.post("/novidades", novidadeController.postarNovidade);
+app.post("/grupo/create", grupoController.criarGrupo);
+app.post("/grupo/list", grupoController.listarGrupos);
 
 app.get("/ativar-conta/:token", async (req, res) => {
   try {

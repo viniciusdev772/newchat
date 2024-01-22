@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Criar Grupo</title>
+</head>
+
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+
+    <div class="bg-white p-8 rounded shadow-md w-96">
+        <h1 class="text-2xl font-bold mb-4">Criar Grupo</h1>
+
+        <!-- Nome do Grupo -->
+        <div class="mb-4">
+            <label for="nome-grupo" class="block text-sm font-medium text-gray-600">Nome do Grupo</label>
+            <input type="text" id="nome-grupo" name="nome-grupo" class="mt-1 p-2 w-full border rounded-md">
+        </div>
+
+        <!-- Descrição -->
+        <div class="mb-4">
+            <label for="descricao" class="block text-sm font-medium text-gray-600">Descrição</label>
+            <textarea id="descricao" name="descricao" rows="3"
+                class="mt-1 p-2 w-full border rounded-md"></textarea>
+        </div>
+
+        <!-- Número Máximo de Pessoas -->
+        <div class="mb-4">
+            <label for="quantidade-pessoas"
+                class="block text-sm font-medium text-gray-600">Quantidade Máxima de Pessoas</label>
+            <input type="number" id="quantidade-pessoas" name="quantidade-pessoas"
+                class="mt-1 p-2 w-full border rounded-md">
+            <p class="text-xs text-gray-500">Máximo de 10 pessoas</p>
+        </div>
+
+        <!-- Botão de Criar Grupo -->
+        <button id="criar-grupo" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Criar
+            Grupo</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#criar-grupo').click(function () {
+                var nomeGrupo = $('#nome-grupo').val();
+                var descricao = $('#descricao').val();
+                var quantidadePessoas = $('#quantidade-pessoas').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/grupo/create',
+                    data: {
+                        nomeGrupo: nomeGrupo,
+                        descricao: descricao,
+                        quantidadePessoas: quantidadePessoas
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        // Adicione aqui o código para lidar com a resposta do servidor, se necessário.
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        // Adicione aqui o código para lidar com erros, se necessário.
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
