@@ -46,7 +46,7 @@ app.post("/usuarios/novo", usuarioController.criarUsuario);
 app.post("/usuarios/login", usuarioController.loginUsuario);
 app.post("/novidades", novidadeController.postarNovidade);
 app.post("/grupo/create", grupoController.criarGrupo);
-app.post("/grupo/list",checker ,grupoController.listarGrupos);
+app.post("/grupo/list",verificarToken ,grupoController.listarGrupos);
 
 app.get("/ativar-conta/:token", async (req, res) => {
   try {
