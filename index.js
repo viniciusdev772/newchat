@@ -1,4 +1,4 @@
-// index.js
+
 
 const express = require("express");
 const sequelize = require("./sequelize");
@@ -81,13 +81,13 @@ app.get("/novidades", verificarToken, async (req, res) => {
   }
 });
 
-// Remova a configuração do evento "headers" aqui, pois não é necessário para WebSocket
+
 
 const MensagemData = {
   conteudo: "",
   uid_sender: "",
   email_sender: "",
-  hora: 0, // Timestamp
+  hora: 0, 
 };
 
 wss.on("connection", (ws) => {
@@ -97,16 +97,16 @@ wss.on("connection", (ws) => {
 
   ws.on("message", async (message) => {
     try {
-      // Verifique se a mensagem recebida está no formato correto
+      
       const mensagemData = Object.assign({}, MensagemData, JSON.parse(message));
 
-      // Adicione a data de recebimento à mensagem
+      
       mensagemData.hora = Date.now();
 
-      // Registre a mensagem no banco de dados
+      
       await Mensagem.create(mensagemData);
 
-      // Envie mensagem para todos os clientes conectados, incluindo o remetente
+      
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(mensagemData));
@@ -114,11 +114,11 @@ wss.on("connection", (ws) => {
       });
     } catch (error) {
       console.error("Erro ao processar a mensagem:", error);
-      // Trate o erro conforme necessário
+      
     }
   });
 });
-// Alteração aqui: Use o servidor criado com WebSocket para ouvir em vez do app.listen
+
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

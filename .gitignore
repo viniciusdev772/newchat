@@ -24,3 +24,4 @@ out/
 # Ignorar arquivos de dependência
 package-lock.json
 yarn.lock
+desktop.ini
