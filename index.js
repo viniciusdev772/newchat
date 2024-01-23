@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const sequelize = require("./sequelize");
 const usuarioController = require("./controllers/usuarioController");
@@ -10,6 +8,7 @@ const Mensagem = require("./models/Mensagem");
 const Grupo = require("./models/Grupo");
 const Participante = require("./models/Participante");
 const grupoController = require("./controllers/GruposController");
+const ResetSenha = require("./models/ResetSenha");
 const app = express();
 const PORT = 3001;
 
@@ -29,7 +28,7 @@ app.use(cors());
 
 const novidadeController = require("./controllers/novidadeController");
 
-sequelize.sync().then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log("Banco de dados sincronizado.");
 });
 
@@ -46,7 +45,8 @@ app.post("/usuarios/novo", usuarioController.criarUsuario);
 app.post("/usuarios/login", usuarioController.loginUsuario);
 app.post("/novidades", novidadeController.postarNovidade);
 app.post("/grupo/create", grupoController.criarGrupo);
-app.post("/grupo/list",verificarToken ,grupoController.listarGrupos);
+app.post("/grupo/list", verificarToken, grupoController.listarGrupos);
+app.post("/reset-senha", usuarioController.redefinirSenha);
 
 app.get("/ativar-conta/:token", async (req, res) => {
   try {
@@ -69,7 +69,87 @@ app.get("/ativar-conta/:token", async (req, res) => {
   }
 });
 
+app.get("/redefinir-senha/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Buscar a entrada no modelo ResetSenha com base no token
+    const resetSenhaEntry = await ResetSenha.findOne({
+      where: { token },
+    });
+
+    if (!resetSenhaEntry) {
+      return res
+        .status(404)
+        .json({ sucesso: false, message: "Token inválido." });
+    }
+
+    // Verificar se o token ainda é válido (não expirou)
+    const agora = new Date();
+    if (agora > resetSenhaEntry.expiresAt) {
+      return res
+        .status(401)
+        .json({ sucesso: false, message: "Token expirado." });
+    }
+
+    // Renderizar a página HTML de redefinição de senha (pode ser uma página com um formulário)
+    res.sendFile(__dirname + "/static/pagina-de-redefinicao-de-senha.html");
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ sucesso: false, message: "Erro ao processar a solicitação." });
+  }
+});
+
 app.get("/check_jwt", checker);
+
+app.post("/api/redefinir-senha/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { novaSenha } = req.body;
+
+    // Buscar a entrada no modelo ResetSenha com base no token
+    const resetSenhaEntry = await ResetSenha.findOne({
+      where: { token },
+    });
+
+    if (!resetSenhaEntry || resetSenhaEntry.expiresAt < new Date()) {
+      return res
+        .status(401)
+        .json({ sucesso: false, message: "Token inválido ou expirado." });
+    }
+
+    //resetSenhaEntry.userUid
+    // Atualizar a senha do usuário
+    const usuario = await Usuario.findOne(
+      { where: { uid: resetSenhaEntry.userUid } },
+      { raw: true }
+    );
+
+    if (!usuario) {
+      return res
+        .status(404)
+        .json({ sucesso: false, message: "Usuário não encontrado." });
+    }
+
+    // Criptografar a nova senha antes de salvar
+    const senhaCriptografada = novaSenha;
+
+    await usuario.update({ senha: senhaCriptografada });
+
+    // Remover a entrada de reset de senha, pois não é mais necessária
+    await resetSenhaEntry.destroy();
+
+    res.json({ sucesso: true, message: "Senha redefinida com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao redefinir a senha:", error);
+    res.status(500).json({
+      sucesso: false,
+      message: "Erro ao redefinir a senha. Tente novamente mais tarde.",
+    });
+  }
+});
 
 app.get("/novidades", verificarToken, async (req, res) => {
   try {
@@ -81,13 +161,11 @@ app.get("/novidades", verificarToken, async (req, res) => {
   }
 });
 
-
-
 const MensagemData = {
   conteudo: "",
   uid_sender: "",
   email_sender: "",
-  hora: 0, 
+  hora: 0,
 };
 
 wss.on("connection", (ws) => {
@@ -97,16 +175,12 @@ wss.on("connection", (ws) => {
 
   ws.on("message", async (message) => {
     try {
-      
       const mensagemData = Object.assign({}, MensagemData, JSON.parse(message));
 
-      
       mensagemData.hora = Date.now();
 
-      
       await Mensagem.create(mensagemData);
 
-      
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(mensagemData));
@@ -114,7 +188,6 @@ wss.on("connection", (ws) => {
       });
     } catch (error) {
       console.error("Erro ao processar a mensagem:", error);
-      
     }
   });
 });

@@ -5,8 +5,10 @@ const pem = require("pem");
 const Usuario = require("../models/Usuario");
 const VerificacaoEmail = require("../models/VerificacaoEmail");
 const transporter = require("../mailer");
+const ResetSenha = require("../models/ResetSenha");
 
 const htmlTemplate = fs.readFileSync("./static/email.html", "utf-8");
+const htmlTemplateRedefinicao = fs.readFileSync("./static/reset.html", "utf-8");
 
 // Função para gerar um uid aleatório
 function gerarUid() {
@@ -150,7 +152,63 @@ async function loginUsuario(req, res) {
   }
 }
 
+async function redefinirSenha(req, res) {
+  try {
+    const { email } = req.body;
+
+    // Verifica se o usuário com o email fornecido existe
+    const usuario = await Usuario.findOne({ where: { email } });
+
+    if (usuario) {
+      // Gera um token único para a redefinição de senha
+      const token = gerarUid();
+
+      // Define a data de expiração (por exemplo, 1 hora a partir de agora)
+      const expiracao = new Date(Date.now() + 1 * 60 * 60 * 1000);
+
+      // Cria uma entrada no modelo ResetSenha associada ao usuário
+      await ResetSenha.create({
+        token,
+        userUid: usuario.uid,
+        expiresAt: expiracao,
+      });
+
+      // Envia um e-mail com o link para a página de redefinição de senha
+      const dominioAtual = req.hostname;
+      const linkRedefinicao = `http://${dominioAtual}/redefinir-senha/${token}`;
+
+      const info = await transporter.sendMail({
+        from: "suv@viniciusdev.com.br",
+        to: email,
+        subject: "Redefinição de Senha",
+        html: htmlTemplateRedefinicao.replace(
+          "link_redefinicao",
+          linkRedefinicao
+        ),
+      });
+
+      console.log("E-mail de redefinição de senha enviado:", info);
+
+      res.json({
+        sucesso: true,
+        message: "Link de redefinição enviado por e-mail.",
+      });
+    } else {
+      res
+        .status(404)
+        .json({ sucesso: false, message: "Usuário não encontrado." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      sucesso: false,
+      message: "Erro ao solicitar redefinição de senha.",
+    });
+  }
+}
+
 module.exports = {
   criarUsuario,
   loginUsuario,
+  redefinirSenha,
 };

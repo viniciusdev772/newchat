@@ -3,6 +3,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../sequelize");
 const VerificacaoEmail = require("./VerificacaoEmail");
+const ResetSenha = require("./ResetSenha");
 
 const Usuario = sequelize.define("usuario", {
   email: {
@@ -38,5 +39,6 @@ const Usuario = sequelize.define("usuario", {
 
 // Relação com o modelo VerificacaoEmail
 Usuario.hasOne(VerificacaoEmail, { foreignKey: "email", sourceKey: "email" });
+Usuario.hasOne(ResetSenha, { foreignKey: "uid", sourceKey: "id" });
 
 module.exports = Usuario;
