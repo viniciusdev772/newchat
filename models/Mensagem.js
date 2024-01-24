@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../sequelize");
 
 const Mensagem = sequelize.define("Mensagem", {
@@ -7,6 +7,10 @@ const Mensagem = sequelize.define("Mensagem", {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false,
     primaryKey: true,
+  },
+  sala: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   conteudo: {
     type: Sequelize.STRING,

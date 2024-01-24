@@ -36,6 +36,7 @@ async function verificarToken(req, res, next) {
 
           // Adiciona o UID decodificado à requisição para uso posterior
           req.uid = decoded.uid;
+          req.email = decoded.email;
           next();
         } catch (error) {
           console.error(error);

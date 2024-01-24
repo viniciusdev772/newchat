@@ -7,7 +7,9 @@ async function criarGrupo(req, res) {
     const { nomeGrupo, descricao, quantidadePessoas } = req.body;
 
     // Adicionando o primeiro participante (vinil600@gmail.com)
-    const participante = await Participante.create({ email: 'vinil600@gmail.com' });
+    const participante = await Participante.create({
+      email: "vinil600@gmail.com",
+    });
 
     const novoGrupo = await Grupo.create({
       nomeGrupo,
@@ -25,18 +27,28 @@ async function criarGrupo(req, res) {
   }
 }
 
-
 async function listarGrupos(req, res) {
   try {
+    const emailRequisicao = req.email; // Assumindo que o email está no parâmetro da consulta
+
     const grupos = await Grupo.findAll({
-      include: [{
-        model: Participante,
-        as: 'participantes',
-        attributes: ['email'],
-      }],
+      include: [
+        {
+          model: Participante,
+          as: "participantes",
+          attributes: ["email"],
+        },
+      ],
     });
 
-    res.json(grupos);
+    // Filtrar grupos pelos participantes que têm o email da requisição
+    const gruposFiltrados = grupos.filter((grupo) =>
+      grupo.participantes.some(
+        (participante) => participante.email === emailRequisicao
+      )
+    );
+
+    res.json(gruposFiltrados);
   } catch (error) {
     console.error("Erro ao listar grupos:", error);
     res.status(500).json({ error: "Erro ao listar grupos." });
