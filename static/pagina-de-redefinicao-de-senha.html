@@ -1,84 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redefinir Senha</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    .container {
-      max-width: 400px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      color: #333333;
-      text-align: center;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      margin-bottom: 8px;
-    }
-
-    input {
-      padding: 8px;
-      margin-bottom: 16px;
-    }
-
-    button {
-      padding: 10px;
-      background-color: #007BFF;
-      color: #ffffff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+  <!-- CDN do Tailwind CSS para melhorar o design -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- CDN do SweetAlert2 para mensagens de alerta mais atraentes -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.css">
 </head>
-<body>
-  <div class="container">
-    <h1>Redefinir Senha</h1>
-    <form id="redefinirSenhaForm">
-      <label for="novaSenha">Nova Senha:</label>
-      <input type="password" id="novaSenha" name="novaSenha" required>
 
-      <label for="confirmarSenha">Confirmar Senha:</label>
-      <input type="password" id="confirmarSenha" name="confirmarSenha" required>
+<body class="bg-gray-200 flex items-center justify-center h-screen">
+  <div class="bg-white max-w-md p-8 rounded shadow-md">
+    <h1 class="text-2xl font-semibold text-gray-700 mb-4">Redefinir Senha</h1>
+    <form id="redefinirSenhaForm" class="flex flex-col">
+      <label for="novaSenha" class="mb-2">Nova Senha:</label>
+      <input type="password" id="novaSenha" name="novaSenha" required
+        class="px-4 py-2 mb-4 border border-gray-300 rounded">
 
-      <button type="button" onclick="enviarRedefinicao()">Redefinir Senha</button>
+      <label for="confirmarSenha" class="mb-2">Confirmar Senha:</label>
+      <input type="password" id="confirmarSenha" name="confirmarSenha" required
+        class="px-4 py-2 mb-4 border border-gray-300 rounded">
+
+      <button type="button" onclick="enviarRedefinicao()"
+        class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700">Redefinir Senha</button>
     </form>
   </div>
+
+  <!-- Scripts do SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.all.min.js"></script>
 
   <script>
     function enviarRedefinicao() {
       const novaSenha = document.getElementById("novaSenha").value;
       const confirmarSenha = document.getElementById("confirmarSenha").value;
-      
+
       // Adicione aqui a lógica para validar as senhas
       if (novaSenha !== confirmarSenha) {
-        alert("As senhas não coincidem. Por favor, corrija.");
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'As senhas não coincidem. Por favor, corrija.',
+        });
         return;
       }
 
@@ -93,20 +57,33 @@
         },
         body: JSON.stringify({ novaSenha }),
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.sucesso) {
-          alert("Senha redefinida com sucesso!");
-          // Adicione redirecionamento ou outra ação após a redefinição bem-sucedida
-        } else {
-          alert(data.message || "Erro ao redefinir a senha.");
-        }
-      })
-      .catch(error => {
-        console.error("Erro ao redefinir a senha:", error);
-        alert("Erro ao redefinir a senha. Tente novamente mais tarde.");
-      });
+        .then(response => response.json())
+        .then(data => {
+          if (data.sucesso) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Sucesso',
+              text: 'Senha redefinida com sucesso!',
+            });
+            // Adicione redirecionamento ou outra ação após a redefinição bem-sucedida
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Erro',
+              text: data.message || 'Erro ao redefinir a senha.',
+            });
+          }
+        })
+        .catch(error => {
+          console.error("Erro ao redefinir a senha:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Erro ao redefinir a senha. Tente novamente mais tarde.',
+          });
+        });
     }
   </script>
 </body>
+
 </html>
