@@ -17,11 +17,13 @@
     <form id="redefinirSenhaForm" class="flex flex-col">
       <label for="novaSenha" class="mb-2">Nova Senha:</label>
       <input type="password" id="novaSenha" name="novaSenha" required
-        class="px-4 py-2 mb-4 border border-gray-300 rounded">
+        class="px-4 py-2 mb-4 border border-gray-300 rounded" pattern="^(?!\s*$).+"
+        title="A senha não pode estar em branco ou conter apenas espaços">
 
       <label for="confirmarSenha" class="mb-2">Confirmar Senha:</label>
       <input type="password" id="confirmarSenha" name="confirmarSenha" required
-        class="px-4 py-2 mb-4 border border-gray-300 rounded">
+        class="px-4 py-2 mb-4 border border-gray-300 rounded" pattern="^(?!\s*$).+"
+        title="A senha não pode estar em branco ou conter apenas espaços">
 
       <button type="button" onclick="enviarRedefinicao()"
         class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700">Redefinir Senha</button>
@@ -33,10 +35,21 @@
 
   <script>
     function enviarRedefinicao() {
-      const novaSenha = document.getElementById("novaSenha").value;
-      const confirmarSenha = document.getElementById("confirmarSenha").value;
+      const novaSenhaInput = document.getElementById("novaSenha");
+      const confirmarSenhaInput = document.getElementById("confirmarSenha");
+      const novaSenha = novaSenhaInput.value.trim(); // Remove espaços no início e no final
+      const confirmarSenha = confirmarSenhaInput.value.trim();
 
       // Adicione aqui a lógica para validar as senhas
+      if (novaSenha === "" || confirmarSenha === "") {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'A senha não pode estar em branco. Por favor, corrija.',
+        });
+        return;
+      }
+
       if (novaSenha !== confirmarSenha) {
         Swal.fire({
           icon: 'error',
