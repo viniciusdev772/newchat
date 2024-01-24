@@ -2,6 +2,7 @@
 
 const Sequelize = require("sequelize");
 const sequelize = require("../sequelize");
+const moment = require("moment-timezone");
 
 const Novidade = sequelize.define("novidade", {
   titulo: {
@@ -11,7 +12,7 @@ const Novidade = sequelize.define("novidade", {
   hora: {
     type: Sequelize.DATE,
     allowNull: false,
-    defaultValue: Sequelize.NOW,
+    defaultValue: () => moment().tz("America/Sao_Paulo").format(), // Obtém a hora certa em Brasília
   },
   uid: {
     type: Sequelize.STRING,
