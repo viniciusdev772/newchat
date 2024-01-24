@@ -118,7 +118,7 @@ async function loginUsuario(req, res) {
           chavePrivadaPem, // Chave privada do certificado PEM
           {
             algorithm: "ES256", // Algoritmo de assinatura RSA
-            expiresIn: "1h",
+            expiresIn: "24h",
           }
         );
 
