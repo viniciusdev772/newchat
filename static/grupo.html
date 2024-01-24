@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Criar Grupo</title>
 </head>
 
@@ -23,17 +24,22 @@
         <!-- Descrição -->
         <div class="mb-4">
             <label for="descricao" class="block text-sm font-medium text-gray-600">Descrição</label>
-            <textarea id="descricao" name="descricao" rows="3"
-                class="mt-1 p-2 w-full border rounded-md"></textarea>
+            <textarea id="descricao" name="descricao" rows="3" class="mt-1 p-2 w-full border rounded-md"></textarea>
         </div>
 
         <!-- Número Máximo de Pessoas -->
         <div class="mb-4">
-            <label for="quantidade-pessoas"
-                class="block text-sm font-medium text-gray-600">Quantidade Máxima de Pessoas</label>
+            <label for="quantidade-pessoas" class="block text-sm font-medium text-gray-600">Quantidade Máxima de
+                Pessoas</label>
             <input type="number" id="quantidade-pessoas" name="quantidade-pessoas"
                 class="mt-1 p-2 w-full border rounded-md">
             <p class="text-xs text-gray-500">Máximo de 10 pessoas</p>
+        </div>
+
+        <!-- Checkbox para Adicionar Todos os Usuários -->
+        <div class="mb-4">
+            <input type="checkbox" id="adicionar-todos" name="adicionar-todos" class="mr-2">
+            <label for="adicionar-todos" class="text-sm text-gray-600">Adicionar todos os usuários</label>
         </div>
 
         <!-- Botão de Criar Grupo -->
@@ -47,6 +53,7 @@
                 var nomeGrupo = $('#nome-grupo').val();
                 var descricao = $('#descricao').val();
                 var quantidadePessoas = $('#quantidade-pessoas').val();
+                var adicionarTodos = $('#adicionar-todos').prop('checked');
 
                 $.ajax({
                     type: 'POST',
@@ -54,15 +61,18 @@
                     data: {
                         nomeGrupo: nomeGrupo,
                         descricao: descricao,
-                        quantidadePessoas: quantidadePessoas
+                        quantidadePessoas: quantidadePessoas,
+                        adicionarTodos: adicionarTodos
                     },
                     success: function (response) {
                         console.log(response);
                         // Adicione aqui o código para lidar com a resposta do servidor, se necessário.
+                        Swal.fire('Sucesso', 'Grupo criado com sucesso!', 'success');
                     },
                     error: function (error) {
                         console.log(error);
                         // Adicione aqui o código para lidar com erros, se necessário.
+                        Swal.fire('Erro', 'Ocorreu um erro ao criar o grupo', 'error');
                     }
                 });
             });

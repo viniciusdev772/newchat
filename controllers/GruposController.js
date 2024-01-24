@@ -4,12 +4,8 @@ const Participante = require("../models/Participante");
 
 async function criarGrupo(req, res) {
   try {
-    const { nomeGrupo, descricao, quantidadePessoas } = req.body;
-
-    // Adicionando o primeiro participante (vinil600@gmail.com)
-    const participante = await Participante.create({
-      email: "vinil600@gmail.com",
-    });
+    const { nomeGrupo, descricao, quantidadePessoas, adicionarTodos } =
+      req.body;
 
     const novoGrupo = await Grupo.create({
       nomeGrupo,
@@ -17,8 +13,27 @@ async function criarGrupo(req, res) {
       quantidadePessoas,
     });
 
-    // Associando o participante ao grupo
-    await novoGrupo.addParticipante(participante);
+    // Se a opção "Adicionar todos os usuários" estiver marcada
+    if (adicionarTodos) {
+      // Obtenha todos os usuários do model
+      const todosUsuarios = await Usuario.findAll();
+
+      // Adicione cada usuário ao grupo
+      for (const usuario of todosUsuarios) {
+        const participante = await Participante.create({
+          email: usuario.email,
+        });
+
+        await novoGrupo.addParticipante(participante);
+      }
+    } else {
+      // Adicionando o primeiro participante (vinil600@gmail.com) se a opção não estiver marcada
+      const participante = await Participante.create({
+        email: "vinil600@gmail.com",
+      });
+
+      await novoGrupo.addParticipante(participante);
+    }
 
     res.json(novoGrupo);
   } catch (error) {
