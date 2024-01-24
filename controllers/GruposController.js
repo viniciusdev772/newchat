@@ -1,6 +1,7 @@
 // controllers/novidadeController.js
 const Grupo = require("../models/Grupo");
 const Participante = require("../models/Participante");
+const Usuario = require("../models/Usuario");
 
 async function criarGrupo(req, res) {
   try {
