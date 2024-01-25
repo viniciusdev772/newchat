@@ -171,39 +171,47 @@ const MensagemData = {
   email_sender: "",
   hora: 0,
 };
-wss.on("connection", async (ws) => {
-  try {
-    const mensagens = await Mensagem.findAll();
+wss.on("headers", (headers, req) => {
+  const grupo = req.headers["grupo"]; // Obtém o valor do header "Grupo"
 
-    if (mensagens.length > 0) {
-      ws.send(JSON.stringify(mensagens));
-    }
+  wss.on("connection", async (ws) => {
+    try {
+      const mensagens = await Mensagem.findAll({
+        where: { sala: grupo }, // Filtra as mensagens pelo grupo especificado
+      });
 
-    ws.on("message", async (message) => {
-      try {
-        const mensagemData = { ...MensagemData, ...JSON.parse(message) };
-        mensagemData.hora = Date.now();
-
-        await Mensagem.create({
-          sala: mensagemData.sala,
-          conteudo: mensagemData.conteudo,
-          uid_sender: mensagemData.uid_sender,
-          email_sender: mensagemData.email_sender,
-          hora: mensagemData.hora,
-        });
-
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(mensagemData));
-          }
-        });
-      } catch (error) {
-        console.error("Erro ao processar a mensagem:", error);
+      if (mensagens.length > 0) {
+        ws.send(JSON.stringify(mensagens));
       }
-    });
-  } catch (error) {
-    console.error("Erro ao obter mensagens:", error);
-  }
+
+      ws.on("message", async (message) => {
+        try {
+          const mensagemData = { ...MensagemData, ...JSON.parse(message) };
+          mensagemData.hora = Date.now();
+
+          await Mensagem.create({
+            sala: mensagemData.sala,
+            conteudo: mensagemData.conteudo,
+            uid_sender: mensagemData.uid_sender,
+            email_sender: mensagemData.email_sender,
+            hora: mensagemData.hora,
+          });
+
+          wss.clients.forEach((client) => {
+            // Verifica se o cliente pertence ao mesmo grupo
+            const clientGrupo = client._socket.remoteAddress.headers["grupo"];
+            if (client.readyState === WebSocket.OPEN && clientGrupo === grupo) {
+              client.send(JSON.stringify(mensagemData));
+            }
+          });
+        } catch (error) {
+          console.error("Erro ao processar a mensagem:", error);
+        }
+      });
+    } catch (error) {
+      console.error("Erro ao obter mensagens:", error);
+    }
+  });
 });
 
 server.listen(PORT, () => {
