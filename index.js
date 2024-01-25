@@ -173,27 +173,30 @@ const MensagemData = {
 
 wss.on("connection", (ws) => {
   Mensagem.findAll().then((mensagens) => {
-    ws.send(JSON.stringify(mensagens));
-  });
-
-  ws.on("message", async (message) => {
-    try {
-      const mensagemData = Object.assign({}, MensagemData, JSON.parse(message));
-
-      mensagemData.hora = Date.now();
-
-      await Mensagem.create(mensagemData);
-
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(mensagemData));
-        }
-      });
-    } catch (error) {
-      console.error("Erro ao processar a mensagem:", error);
+    if (mensagens.length > 0) {
+      ws.send(JSON.stringify(mensagens));
     }
+
+    ws.on("message", async (message) => {
+      try {
+        const mensagemData = Object.assign({}, MensagemData, JSON.parse(message));
+
+        mensagemData.hora = Date.now();
+
+        await Mensagem.create(mensagemData);
+
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(mensagemData));
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao processar a mensagem:", error);
+      }
+    });
   });
 });
+
 
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
