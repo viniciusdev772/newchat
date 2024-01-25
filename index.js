@@ -171,47 +171,45 @@ const MensagemData = {
   email_sender: "",
   hora: 0,
 };
-wss.on("headers", (headers, req) => {
-  const grupo = req.headers["grupo"]; // Obtém o valor do header "Grupo"
+wss.on("connection", async (ws, req) => {
+  const grupo = req.headers["grupo"];
 
-  wss.on("connection", async (ws) => {
-    try {
-      const mensagens = await Mensagem.findAll({
-        where: { sala: grupo }, // Filtra as mensagens pelo grupo especificado
-      });
+  try {
+    const mensagens = await Mensagem.findAll({
+      where: { sala: grupo },
+    });
 
-      if (mensagens.length > 0) {
-        ws.send(JSON.stringify(mensagens));
-      }
-
-      ws.on("message", async (message) => {
-        try {
-          const mensagemData = { ...MensagemData, ...JSON.parse(message) };
-          mensagemData.hora = Date.now();
-
-          await Mensagem.create({
-            sala: mensagemData.sala,
-            conteudo: mensagemData.conteudo,
-            uid_sender: mensagemData.uid_sender,
-            email_sender: mensagemData.email_sender,
-            hora: mensagemData.hora,
-          });
-
-          // Envia a mensagem para todos os clientes no mesmo grupo, incluindo o remetente
-          wss.clients.forEach((client) => {
-            const clientGrupo = client._socket.remoteAddress.headers["grupo"];
-            if (client.readyState === WebSocket.OPEN && clientGrupo === grupo) {
-              client.send(JSON.stringify(mensagemData));
-            }
-          });
-        } catch (error) {
-          console.error("Erro ao processar a mensagem:", error);
-        }
-      });
-    } catch (error) {
-      console.error("Erro ao obter mensagens:", error);
+    if (mensagens.length > 0) {
+      ws.send(JSON.stringify(mensagens));
     }
-  });
+
+    ws.on("message", async (message) => {
+      try {
+        const mensagemData = { ...MensagemData, ...JSON.parse(message) };
+        mensagemData.hora = Date.now();
+
+        await Mensagem.create({
+          sala: mensagemData.sala,
+          conteudo: mensagemData.conteudo,
+          uid_sender: mensagemData.uid_sender,
+          email_sender: mensagemData.email_sender,
+          hora: mensagemData.hora,
+        });
+
+        // Envia a mensagem para todos os clientes no mesmo grupo, incluindo o remetente
+        wss.clients.forEach((client) => {
+          const clientGrupo = client._socket.remoteAddress.headers["grupo"];
+          if (client.readyState === WebSocket.OPEN && clientGrupo === grupo && client !== ws) {
+            client.send(JSON.stringify(mensagemData));
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao processar a mensagem:", error);
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao obter mensagens:", error);
+  }
 });
 
 server.listen(PORT, () => {
