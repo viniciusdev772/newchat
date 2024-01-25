@@ -184,7 +184,13 @@ wss.on("connection", async (ws) => {
         const mensagemData = { ...MensagemData, ...JSON.parse(message) };
         mensagemData.hora = Date.now();
 
-        await Mensagem.create(mensagemData);
+        await Mensagem.create({
+          sala: mensagemData.sala,
+          conteudo: mensagemData.conteudo,
+          uid_sender: mensagemData.uid_sender,
+          email_sender: mensagemData.email_sender,
+          hora: mensagemData.hora,
+        });
 
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
