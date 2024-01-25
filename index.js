@@ -165,22 +165,23 @@ app.get("/novidades", verificarToken, async (req, res) => {
 });
 
 const MensagemData = {
+  sala: "", // Adicione o valor apropriado para a sala
   conteudo: "",
   uid_sender: "",
   email_sender: "",
   hora: 0,
 };
+wss.on("connection", async (ws) => {
+  try {
+    const mensagens = await Mensagem.findAll();
 
-wss.on("connection", (ws) => {
-  Mensagem.findAll().then((mensagens) => {
     if (mensagens.length > 0) {
       ws.send(JSON.stringify(mensagens));
     }
 
     ws.on("message", async (message) => {
       try {
-        const mensagemData = Object.assign({}, MensagemData, JSON.parse(message));
-
+        const mensagemData = { ...MensagemData, ...JSON.parse(message) };
         mensagemData.hora = Date.now();
 
         await Mensagem.create(mensagemData);
@@ -194,9 +195,10 @@ wss.on("connection", (ws) => {
         console.error("Erro ao processar a mensagem:", error);
       }
     });
-  });
+  } catch (error) {
+    console.error("Erro ao obter mensagens:", error);
+  }
 });
-
 
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
