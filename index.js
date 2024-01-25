@@ -197,10 +197,10 @@ wss.on("headers", (headers, req) => {
             hora: mensagemData.hora,
           });
 
-          // Envia mensagens apenas para clientes no mesmo grupo
+          // Envia a mensagem para todos os clientes no mesmo grupo, incluindo o remetente
           wss.clients.forEach((client) => {
             const clientGrupo = client._socket.remoteAddress.headers["grupo"];
-            if (client.readyState === WebSocket.OPEN && clientGrupo === grupo && client !== ws) {
+            if (client.readyState === WebSocket.OPEN && clientGrupo === grupo) {
               client.send(JSON.stringify(mensagemData));
             }
           });
@@ -213,7 +213,6 @@ wss.on("headers", (headers, req) => {
     }
   });
 });
-
 
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
