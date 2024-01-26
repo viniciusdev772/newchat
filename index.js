@@ -176,14 +176,6 @@ wss.on("connection", async (ws, req) => {
   const uid = req.headers["uid"];
 
   try {
-    const mensagens = await Mensagem.findAll({
-      where: { sala: grupo },
-    });
-
-    if (mensagens.length > 0) {
-      ws.send(JSON.stringify(mensagens));
-    }
-
     ws.on("message", async (message) => {
       try {
         const mensagemData = { ...MensagemData, ...JSON.parse(message) };
@@ -197,17 +189,14 @@ wss.on("connection", async (ws, req) => {
           hora: mensagemData.hora,
         });
 
-        // Envia a mensagem para todos os clientes no mesmo grupo, incluindo o remetente
-        wss.clients.forEach((client) => {
-          //const clientGrupo = client._socket.remoteAddress.headers["grupo"];
-          if (client.readyState === WebSocket.OPEN) {
-            const mensagens = Mensagem.findAll({
-              where: { sala: grupo },
-            });
+        // Obtém e envia mensagens atualizadas para todos os clientes no mesmo grupo
+        const mensagensAtualizadas = await Mensagem.findAll({
+          where: { sala: grupo },
+        });
 
-            if (mensagens.length > 0) {
-              ws.send(JSON.stringify(mensagens));
-            }
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(mensagensAtualizadas));
           }
         });
       } catch (error) {
