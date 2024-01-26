@@ -178,6 +178,7 @@ wss.on("connection", async (ws, req) => {
   try {
     const mensagens = await Mensagem.findAll({
       where: { sala: grupo },
+      order: [["createdAt", "DESC"]],
     });
 
     if (mensagens.length > 0) {
@@ -199,6 +200,7 @@ wss.on("connection", async (ws, req) => {
         // Obtém e envia mensagens atualizadas para todos os clientes no mesmo grupo
         const mensagensAtualizadas = await Mensagem.findAll({
           where: { sala: grupo },
+          order: [["createdAt", "DESC"]],
         });
 
         wss.clients.forEach((client) => {
