@@ -199,12 +199,12 @@ wss.on("connection", async (ws, req) => {
 
         // Envia a mensagem para todos os clientes no mesmo grupo, incluindo o remetente
         wss.clients.forEach((client) => {
-          const clientGrupo = client._socket.remoteAddress.headers["grupo"];
+          //const clientGrupo = client._socket.remoteAddress.headers["grupo"];
           if (client.readyState === WebSocket.OPEN) {
             const mensagens = Mensagem.findAll({
               where: { sala: grupo },
             });
-        
+
             if (mensagens.length > 0) {
               ws.send(JSON.stringify(mensagens));
             }
