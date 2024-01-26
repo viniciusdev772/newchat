@@ -176,6 +176,13 @@ wss.on("connection", async (ws, req) => {
   const uid = req.headers["uid"];
 
   try {
+    const mensagens = await Mensagem.findAll({
+      where: { sala: grupo },
+    });
+
+    if (mensagens.length > 0) {
+      ws.send(JSON.stringify(mensagens));
+    }
     ws.on("message", async (message) => {
       try {
         const mensagemData = { ...MensagemData, ...JSON.parse(message) };
