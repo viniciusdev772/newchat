@@ -201,7 +201,13 @@ wss.on("connection", async (ws, req) => {
         wss.clients.forEach((client) => {
           const clientGrupo = client._socket.remoteAddress.headers["grupo"];
           if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(mensagemData));
+            const mensagens = Mensagem.findAll({
+              where: { sala: grupo },
+            });
+        
+            if (mensagens.length > 0) {
+              ws.send(JSON.stringify(mensagens));
+            }
           }
         });
       } catch (error) {
