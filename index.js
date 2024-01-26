@@ -211,7 +211,7 @@ wss.on("connection", async (ws, req) => {
           }
         });
       } catch (error) {
-        console.error("Erro ao processar a mensagem:", error);
+        console.error(error);
       }
     });
   } catch (error) {
