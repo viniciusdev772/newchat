@@ -185,6 +185,7 @@ wss.on("connection", async (ws, req) => {
     });
 
     if (mensagens.length > 0) {
+      ws.send(JSON.stringify(mensagens));
       for (const mensagem of mensagens) {
         // Verificar se o usuário já leu a mensagem
         const mensagemLida = await Lidas.findOne({
