@@ -3,12 +3,12 @@ const sequelize = require("../sequelize");
 
 const Lidas = sequelize.define("mensagens_lidas", {
   uid_msg: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
     primaryKey: true,
   },
   uid_user: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
   },
 });
