@@ -187,7 +187,6 @@ wss.on("connection", async (ws, req) => {
     ws.on("message", async (message) => {
       try {
         const mensagemData = { ...MensagemData, ...JSON.parse(message) };
-        mensagemData.hora = Date.now();
 
         await Mensagem.create({
           sala: mensagemData.sala,
