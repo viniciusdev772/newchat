@@ -211,13 +211,17 @@ wss.on("connection", async (ws, req) => {
         });
 
         mensagens.forEach((mensagem) => {
-          const usuariosLidos = mensagensLidas
-            .filter((lida) => lida.uid_msg === mensagem.uid_msg)
-            .map((lida) => lida.uid_user);
+          const mensagensLidas = Lidas.findAll({
+            where: { uid_msg: mensagem.uid_msg },
+            attributes: ["uid_user"],
+          });
+
+          const usuariosLidos = mensagensLidas.map((lida) => lida.uid_user);
 
           const usuariosNaoLidos = uidsUsuarios.filter(
             (uid) => !usuariosLidos.includes(uid)
           );
+
           console.log("mensagem.uid_msg", mensagem.uid_msg);
           console.log(usuariosNaoLidos);
         });
