@@ -178,8 +178,11 @@ wss.on("connection", async (ws, req) => {
   const grupo = req.headers["grupo"];
   const uid = req.headers["uid"];
 
-  wss.on("close", () => {
-    console.log("Usuario de uid " + uid + " desconectou. ");
+  ws.on("close", () => {
+    console.log("Usuario de uid CLose " + uid + " desconectou. ");
+  });
+  ws.on("disconnect", () => {
+    console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
   });
 
   try {
