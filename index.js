@@ -179,14 +179,14 @@ wss.on("connection", async (ws, req) => {
   const uid = req.headers["uid"];
 
   try {
-    const mensagens = await Mensagem.findAll({
+    const mensagen4s = await Mensagem.findAll({
       where: { sala: grupo },
       order: [["createdAt", "DESC"]],
     });
 
-    if (mensagens.length > 0) {
-      ws.send(JSON.stringify(mensagens));
-      for (const mensagem of mensagens) {
+    if (mensagen4s.length > 0) {
+      ws.send(JSON.stringify(mensagen4s));
+      for (const mensagem of mensagen4s) {
         // Verificar se o usuário já leu a mensagem
         const mensagemLida = await Lidas.findOne({
           where: { uid_msg: mensagem.uid_msg, uid_user: uid },
