@@ -206,13 +206,6 @@ wss.on("connection", async (ws, req) => {
         const uidsUsuarios = todosUsuarios.map((usuario) => usuario.uid);
 
         // Obter todos os UIDs dos usuários que não viram esta mensagem
-        const usuariosNaoVistos = uidsUsuarios.filter(
-          async (uidUsuario) =>
-            !(await Lidas.findOne({
-              where: { uid_msg: mensagem.uid_msg, uid_user: uidUsuario },
-            }))
-        );
-
         const uidsUsuariosLidos = (
           await Lidas.findAll({
             attributes: ["uid_user"],
@@ -220,6 +213,7 @@ wss.on("connection", async (ws, req) => {
           })
         ).map((lida) => lida.uid_user);
 
+        // Obter os UIDs dos usuários que ainda não leram nenhuma mensagem
         const uidsUsuariosNaoLidos = uidsUsuarios.filter(
           (uid) => !uidsUsuariosLidos.includes(uid)
         );
@@ -227,6 +221,17 @@ wss.on("connection", async (ws, req) => {
         console.log(
           "Lista de UIDs dos usuários que ainda não leram nenhuma mensagem:",
           uidsUsuariosNaoLidos
+        );
+
+        // Obter os UIDs das mensagens que esses usuários não visualizaram
+        const mensagensNaoVistas = await Mensagem.findAll({
+          attributes: ["uid_msg", "uid_sender"], // Adicione 'uid_sender' se desejar também os UIDs dos remetentes
+          where: { uid_msg: { [Sequelize.Op.notIn]: uidsUsuariosLidos } },
+        });
+
+        console.log(
+          "Lista de UIDs das mensagens que esses usuários não visualizaram:",
+          mensagensNaoVistas
         );
       }
 
