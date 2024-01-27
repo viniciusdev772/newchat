@@ -13,6 +13,8 @@ const Lidas = require("./models/Lidas");
 const app = express();
 const PORT = 3001;
 
+const Sequelize = require("sequelize");
+
 const cors = require("cors");
 
 const WebSocket = require("ws");
@@ -183,6 +185,35 @@ wss.on("connection", async (ws, req) => {
     });
 
     if (mensagens.length > 0) {
+      mensagens.forEach(async (mensagem4) => {
+        await Lidas.create({
+          uid_msg: mensagem4.uid_msg,
+          uid_user: uid,
+        });
+
+        const todosUidsUsuarios = await Usuario.findAll({
+          attributes: ["uid"],
+        });
+
+        const uidsUsuarios = todosUidsUsuarios.map((usuario) => usuario.uid);
+
+        const mensagensLidas = await Lidas.findAll({
+          where: { uid_user: { [Sequelize.Op.in]: uidsUsuarios } },
+          attributes: ["uid_msg"],
+        });
+
+        todasAsMensagens.forEach((mensagem) => {
+          const usuariosLidos = mensagensLidas
+            .filter((lida) => lida.uid_msg === mensagem.uid_msg)
+            .map((lida) => lida.uid_user);
+
+          const usuariosNaoLidos = uidsUsuarios.filter(
+            (uid) => !usuariosLidos.includes(uid)
+          );
+          console.log("mensagem.uid_msg", mensagem.uid_msg);
+          console.log(usuariosNaoLidos);
+        });
+      });
       ws.send(JSON.stringify(mensagens));
     }
     ws.on("message", async (message) => {
