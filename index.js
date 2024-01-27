@@ -206,29 +206,34 @@ wss.on("connection", async (ws, req) => {
         const uidsUsuarios = todosUsuarios.map((usuario) => usuario.uid);
 
         // Obter todos os UIDs dos usuários que não viram esta mensagem
-        const uidsUsuariosLidos = (await Lidas.findAll({
-          attributes: ['uid_user'],
-          where: { uid_user: { [Sequelize.Op.in]: uidsUsuarios } },
-        })).map(lida => lida.uid_user);
-      
+        const uidsUsuariosLidos = (
+          await Lidas.findAll({
+            attributes: ["uid_user"],
+            where: { uid_user: { [Sequelize.Op.in]: uidsUsuarios } },
+          })
+        ).map((lida) => lida.uid_user);
+
         // Obter os UIDs dos usuários que ainda não leram nenhuma mensagem
-        const uidsUsuariosNaoLidos = uidsUsuarios.filter(uid => !uidsUsuariosLidos.includes(uid));
-      
-        console.log('Mensagens não lidas pelos usuários:');
-      
+        const uidsUsuariosNaoLidos = uidsUsuarios.filter(
+          (uid) => !uidsUsuariosLidos.includes(uid)
+        );
+
+        console.log("Mensagens não lidas pelos usuários:");
+
         // Obter as mensagens que esses usuários não visualizaram
         const mensagensNaoVistas = await Mensagem.findAll({
-          attributes: ['uid_msg', 'uid_sender'],
+          attributes: ["uid_msg", "uid_sender"],
           where: { uid_msg: { [Sequelize.Op.notIn]: uidsUsuariosLidos } },
         });
-      
-        mensagensNaoVistas.forEach(mensagem => {
-          uidsUsuariosNaoLidos.forEach(uidUsuario => {
-            console.log(`Usuario ${uidUsuario} não leu a mensagem ${mensagem.uid_msg}`);
+
+        mensagensNaoVistas.forEach((mensagem) => {
+          uidsUsuariosNaoLidos.forEach((uidUsuario) => {
+            console.log(
+              `Usuario ${uidUsuario} não leu a mensagem ${mensagem.uid_msg}`
+            );
           });
         });
-       
-          
+      }
 
       ws.send(JSON.stringify(mensagensAtualizadas));
     }
