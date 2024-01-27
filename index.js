@@ -213,9 +213,20 @@ wss.on("connection", async (ws, req) => {
             }))
         );
 
+        const uidsUsuariosLidos = (
+          await Lidas.findAll({
+            attributes: ["uid_user"],
+            where: { uid_user: { [Sequelize.Op.in]: uidsUsuarios } },
+          })
+        ).map((lida) => lida.uid_user);
+
+        const uidsUsuariosNaoLidos = uidsUsuarios.filter(
+          (uid) => !uidsUsuariosLidos.includes(uid)
+        );
+
         console.log(
-          `Usuários não vistos para a mensagem ${mensagem.uid_msg}:`,
-          usuariosNaoVistos
+          "Lista de UIDs dos usuários que ainda não leram nenhuma mensagem:",
+          uidsUsuariosNaoLidos
         );
       }
 
