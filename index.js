@@ -210,7 +210,10 @@ wss.on("connection", async (ws, req) => {
           attributes: ["uid_msg"],
         });
 
-        mensagens.forEach((mensagem) => {
+        Mensagem.findAll({
+          where: { sala: grupo },
+          order: [["createdAt", "DESC"]],
+        }).forEach((mensagem) => {
           const mensagensLidas = Lidas.findAll({
             where: { uid_msg: mensagem.uid_msg },
             attributes: ["uid_user"],
