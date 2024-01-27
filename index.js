@@ -185,20 +185,8 @@ wss.on("connection", async (ws, req) => {
     });
 
     if (mensagens.length > 0) {
-      mensagens.forEach(async (mensagem) => {
+      for (const mensagem of mensagens) {
         // Verificar se o usuário já leu a mensagem
-
-        const usuariosNaoVistos = uidsUsuarios.filter(
-          async (uidUsuario) =>
-            !(await Lidas.findOne({
-              where: { uid_msg: mensagem.uid_msg, uid_user: uidUsuario },
-            }))
-        );
-        console.log(
-          `Usuários não vistos para a mensagem ${mensagem.uid_msg}:`,
-          usuariosNaoVistos
-        );
-
         const mensagemLida = await Lidas.findOne({
           where: { uid_msg: mensagem.uid_msg, uid_user: uid },
         });
@@ -209,12 +197,27 @@ wss.on("connection", async (ws, req) => {
             uid_msg: mensagem.uid_msg,
             uid_user: uid,
           });
-
-          const usuariosNaoVistos = uidsUsuarios.filter(
-            (uidUsuario) => uidUsuario !== uid
-          );
         }
-      });
+
+        const todosUsuarios = await Usuario.findAll({
+          attributes: ["uid"],
+        });
+
+        const uidsUsuarios = todosUsuarios.map((usuario) => usuario.uid);
+
+        // Obter todos os UIDs dos usuários que não viram esta mensagem
+        const usuariosNaoVistos = uidsUsuarios.filter(
+          async (uidUsuario) =>
+            !(await Lidas.findOne({
+              where: { uid_msg: mensagem.uid_msg, uid_user: uidUsuario },
+            }))
+        );
+
+        console.log(
+          `Usuários não vistos para a mensagem ${mensagem.uid_msg}:`,
+          usuariosNaoVistos
+        );
+      }
 
       // Atualizar a lista de mensagens após a marcação como lidas
       const mensagensAtualizadas = await Mensagem.findAll({
