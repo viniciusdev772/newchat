@@ -186,9 +186,17 @@ wss.on("connection", async (ws, req) => {
 
     if (mensagens.length > 0) {
       mensagens.forEach(async (mensagem4) => {
-        await Lidas.create({
-          uid_msg: mensagem4.uid_msg,
-          uid_user: uid,
+        //antes de chamar metodo Lida.create, verificar se o usuario ja leu a mensagem
+
+        Lidas.findAll({
+          where: { uid_msg: mensagem4.uid_msg, uid_user: uid },
+        }).then((lida) => {
+          if (lida.length === 0) {
+            Lidas.create({
+              uid_msg: mensagem4.uid_msg,
+              uid_user: uid,
+            });
+          }
         });
 
         const todosUidsUsuarios = await Usuario.findAll({
