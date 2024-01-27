@@ -197,6 +197,14 @@ wss.on("connection", async (ws, req) => {
             uid_msg: mensagem.uid_msg,
             uid_user: uid,
           });
+
+          const usuariosNaoVistos = uidsUsuarios.filter(
+            (uidUsuario) => uidUsuario !== uid
+          );
+          console.log(
+            `Usuários não vistos para a mensagem ${mensagem.uid_msg}:`,
+            usuariosNaoVistos
+          );
         }
       });
 
