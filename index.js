@@ -9,6 +9,7 @@ const Grupo = require("./models/Grupo");
 const Participante = require("./models/Participante");
 const grupoController = require("./controllers/GruposController");
 const ResetSenha = require("./models/ResetSenha");
+const Lidas = require("./models/Lidas");
 const app = express();
 const PORT = 3001;
 
@@ -182,6 +183,12 @@ wss.on("connection", async (ws, req) => {
     });
 
     if (mensagens.length > 0) {
+      mensagens.forEach(async (mensagem4) => {
+        await Lidas.create({
+          uid_msg: mensagem4.uid_msg,
+          uid_user: uid,
+        });
+      });
       ws.send(JSON.stringify(mensagens));
     }
     ws.on("message", async (message) => {
