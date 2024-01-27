@@ -235,7 +235,12 @@ wss.on("connection", async (ws, req) => {
         });
       }
 
-      ws.send(JSON.stringify(mensagensAtualizadas));
+      const mensagens = await Mensagem.findAll({
+        where: { sala: grupo },
+        order: [["createdAt", "DESC"]],
+      });
+
+      ws.send(JSON.stringify(mensagens));
     }
 
     ws.on("message", async (message) => {
