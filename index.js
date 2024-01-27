@@ -178,6 +178,10 @@ wss.on("connection", async (ws, req) => {
   const grupo = req.headers["grupo"];
   const uid = req.headers["uid"];
 
+  wss.on("disconnect", () => {
+    console.log("Usuario de uid " + uid + " desconectou. ");
+  });
+
   try {
     const mensagen4s = await Mensagem.findAll({
       where: { sala: grupo },
