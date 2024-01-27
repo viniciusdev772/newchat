@@ -202,7 +202,7 @@ wss.on("connection", async (ws, req) => {
           attributes: ["uid_msg"],
         });
 
-        todasAsMensagens.forEach((mensagem) => {
+        mensagens.forEach((mensagem) => {
           const usuariosLidos = mensagensLidas
             .filter((lida) => lida.uid_msg === mensagem.uid_msg)
             .map((lida) => lida.uid_user);
