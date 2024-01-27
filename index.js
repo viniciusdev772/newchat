@@ -185,52 +185,30 @@ wss.on("connection", async (ws, req) => {
     });
 
     if (mensagens.length > 0) {
-      mensagens.forEach(async (mensagem4) => {
-        //antes de chamar metodo Lida.create, verificar se o usuario ja leu a mensagem
-
-        Lidas.findAll({
-          where: { uid_msg: mensagem4.uid_msg, uid_user: uid },
-        }).then((lida) => {
-          if (lida.length === 0) {
-            Lidas.create({
-              uid_msg: mensagem4.uid_msg,
-              uid_user: uid,
-            });
-          }
+      mensagens.forEach(async (mensagem) => {
+        // Verificar se o usuário já leu a mensagem
+        const mensagemLida = await Lidas.findOne({
+          where: { uid_msg: mensagem.uid_msg, uid_user: uid },
         });
 
-        const todosUidsUsuarios = await Usuario.findAll({
-          attributes: ["uid"],
-        });
-
-        const uidsUsuarios = todosUidsUsuarios.map((usuario) => usuario.uid);
-
-        const mensagensLidas = await Lidas.findAll({
-          where: { uid_user: { [Sequelize.Op.in]: uidsUsuarios } },
-          attributes: ["uid_msg"],
-        });
-
-        Mensagem.findAll({
-          where: { sala: grupo },
-          order: [["createdAt", "DESC"]],
-        }).forEach((mensagem) => {
-          const mensagensLidas = Lidas.findAll({
-            where: { uid_msg: mensagem.uid_msg },
-            attributes: ["uid_user"],
+        if (!mensagemLida) {
+          // Se o usuário ainda não leu a mensagem, marca como lida
+          await Lidas.create({
+            uid_msg: mensagem.uid_msg,
+            uid_user: uid,
           });
-
-          const usuariosLidos = mensagensLidas.map((lida) => lida.uid_user);
-
-          const usuariosNaoLidos = uidsUsuarios.filter(
-            (uid) => !usuariosLidos.includes(uid)
-          );
-
-          console.log("mensagem.uid_msg", mensagem.uid_msg);
-          console.log(usuariosNaoLidos);
-        });
+        }
       });
-      ws.send(JSON.stringify(mensagens));
+
+      // Atualizar a lista de mensagens após a marcação como lidas
+      const mensagensAtualizadas = await Mensagem.findAll({
+        where: { sala: grupo },
+        order: [["createdAt", "DESC"]],
+      });
+
+      ws.send(JSON.stringify(mensagensAtualizadas));
     }
+
     ws.on("message", async (message) => {
       try {
         const mensagemData = { ...MensagemData, ...JSON.parse(message) };
