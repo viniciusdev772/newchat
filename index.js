@@ -195,52 +195,46 @@ wss.on("connection", async (ws, req) => {
 
   ws.on("close", () => {
     console.log("Usuario de uid CLose " + uid + " desconectou. ");
-    VistoPorUltimo.deleteMany({ uid: uid }, (err) => {
-      if (err) {
-        console.error("Erro ao excluir registros antigos:", err);
-        return;
-      }
-
-      // Salvando o novo registro diretamente
-      VistoPorUltimo.create(
-        {
+    VistoPorUltimo.destroy({
+      where: {
+        uid: uid,
+      },
+    })
+      .then(() => {
+        // Exclusão bem-sucedida, agora criando o novo registro
+        return VistoPorUltimo.create({
           uid: uid,
-          hora: ms,
-        },
-        (err) => {
-          if (err) {
-            console.error("Erro ao salvar o novo registro:", err);
-          } else {
-            console.log("Registro visto por último criado com sucesso.");
-          }
-        }
-      );
-    });
+          hora: ms, // Convertendo para string
+        });
+      })
+      .then(() => {
+        console.log("Registro visto por último criado com sucesso.");
+      })
+      .catch((err) => {
+        console.error("Erro ao excluir ou criar registros:", err);
+      });
   });
   ws.on("disconnect", () => {
     console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
 
-    VistoPorUltimo.deleteMany({ uid: uid }, (err) => {
-      if (err) {
-        console.error("Erro ao excluir registros antigos:", err);
-        return;
-      }
-
-      // Salvando o novo registro diretamente
-      VistoPorUltimo.create(
-        {
+    VistoPorUltimo.destroy({
+      where: {
+        uid: uid,
+      },
+    })
+      .then(() => {
+        // Exclusão bem-sucedida, agora criando o novo registro
+        return VistoPorUltimo.create({
           uid: uid,
-          hora: ms,
-        },
-        (err) => {
-          if (err) {
-            console.error("Erro ao salvar o novo registro:", err);
-          } else {
-            console.log("Registro visto por último criado com sucesso.");
-          }
-        }
-      );
-    });
+          hora: ms, // Convertendo para string
+        });
+      })
+      .then(() => {
+        console.log("Registro visto por último criado com sucesso.");
+      })
+      .catch((err) => {
+        console.error("Erro ao excluir ou criar registros:", err);
+      });
   });
 
   try {
