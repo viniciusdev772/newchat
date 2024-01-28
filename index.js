@@ -199,11 +199,9 @@ wss.on("connection", async (ws, req) => {
     },
   })
     .then(() => {
-      // Exclusão bem-sucedida, agora criando o novo registro
-
       return VistoPorUltimo.create({
         uid: uid,
-        hora: "online", // Convertendo para string
+        hora: "online",
       });
     })
     .then(() => {
@@ -222,10 +220,9 @@ wss.on("connection", async (ws, req) => {
       },
     })
       .then(() => {
-        // Exclusão bem-sucedida, agora criando o novo registro
         return VistoPorUltimo.create({
           uid: uid,
-          hora: now.valueOf(), // Convertendo para string
+          hora: now.valueOf(),
         });
       })
       .then(() => {
@@ -245,11 +242,9 @@ wss.on("connection", async (ws, req) => {
       },
     })
       .then(() => {
-        // Exclusão bem-sucedida, agora criando o novo registro
-
         return VistoPorUltimo.create({
           uid: uid,
-          hora: now.valueOf(), // Convertendo para string
+          hora: now.valueOf(),
         });
       })
       .then(() => {
