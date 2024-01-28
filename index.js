@@ -10,6 +10,7 @@ const Participante = require("./models/Participante");
 const grupoController = require("./controllers/GruposController");
 const ResetSenha = require("./models/ResetSenha");
 const Lidas = require("./models/Lidas");
+const VistoPorUltimo = require("./models/VistoPorUltimo");
 const app = express();
 const PORT = 3001;
 
@@ -28,6 +29,18 @@ const wss = new WebSocket.Server({ server });
 app.server = server;
 
 app.use(cors());
+
+// Import the necessary module.
+const moment = require("moment-timezone");
+
+// Get the current time in Brasília.
+const now = moment().tz("America/Sao_Paulo");
+
+// Format the time in milliseconds.
+const ms = now.valueOf();
+
+// Log the time to the console.
+console.log(`The current time in Brasília in milliseconds is: ${ms}`);
 
 const novidadeController = require("./controllers/novidadeController");
 
@@ -178,11 +191,56 @@ wss.on("connection", async (ws, req) => {
   const grupo = req.headers["grupo"];
   const uid = req.headers["uid"];
 
+  const ms = now.valueOf();
+
   ws.on("close", () => {
     console.log("Usuario de uid CLose " + uid + " desconectou. ");
+    VistoPorUltimo.deleteMany({ uid: uid }, (err) => {
+      if (err) {
+        console.error("Erro ao excluir registros antigos:", err);
+        return;
+      }
+
+      // Salvando o novo registro diretamente
+      VistoPorUltimo.create(
+        {
+          uid: uid,
+          hora: ms,
+        },
+        (err) => {
+          if (err) {
+            console.error("Erro ao salvar o novo registro:", err);
+          } else {
+            console.log("Registro visto por último criado com sucesso.");
+          }
+        }
+      );
+    });
   });
   ws.on("disconnect", () => {
     console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
+
+    VistoPorUltimo.deleteMany({ uid: uid }, (err) => {
+      if (err) {
+        console.error("Erro ao excluir registros antigos:", err);
+        return;
+      }
+
+      // Salvando o novo registro diretamente
+      VistoPorUltimo.create(
+        {
+          uid: uid,
+          hora: ms,
+        },
+        (err) => {
+          if (err) {
+            console.error("Erro ao salvar o novo registro:", err);
+          } else {
+            console.log("Registro visto por último criado com sucesso.");
+          }
+        }
+      );
+    });
   });
 
   try {
