@@ -214,6 +214,7 @@ wss.on("connection", async (ws, req) => {
     });
 
   ws.on("close", () => {
+    const now = moment().tz("America/Sao_Paulo");
     console.log("Usuario de uid CLose " + uid + " desconectou. ");
     VistoPorUltimo.destroy({
       where: {
@@ -235,6 +236,7 @@ wss.on("connection", async (ws, req) => {
       });
   });
   ws.on("disconnect", () => {
+    const now = moment().tz("America/Sao_Paulo");
     console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
 
     VistoPorUltimo.destroy({
