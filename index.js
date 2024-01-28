@@ -193,6 +193,26 @@ wss.on("connection", async (ws, req) => {
 
   const ms = now.valueOf();
 
+  VistoPorUltimo.destroy({
+    where: {
+      uid: uid,
+    },
+  })
+    .then(() => {
+      // Exclusão bem-sucedida, agora criando o novo registro
+
+      return VistoPorUltimo.create({
+        uid: uid,
+        hora: "online", // Convertendo para string
+      });
+    })
+    .then(() => {
+      console.log("Registro visto por último criado com sucesso.");
+    })
+    .catch((err) => {
+      console.error("Erro ao excluir ou criar registros:", err);
+    });
+
   ws.on("close", () => {
     console.log("Usuario de uid CLose " + uid + " desconectou. ");
     VistoPorUltimo.destroy({
