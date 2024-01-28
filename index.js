@@ -11,6 +11,7 @@ const grupoController = require("./controllers/GruposController");
 const ResetSenha = require("./models/ResetSenha");
 const Lidas = require("./models/Lidas");
 const VistoPorUltimo = require("./models/VistoPorUltimo");
+const Chamados = require("./models/Chamados");
 const app = express();
 const PORT = 3001;
 
@@ -63,6 +64,14 @@ app.post("/novidades", novidadeController.postarNovidade);
 app.post("/grupo/create", grupoController.criarGrupo);
 app.post("/grupo/list", verificarToken, grupoController.listarGrupos);
 app.post("/reset-senha", usuarioController.redefinirSenha);
+
+app.post("/chamado", async (req, res) => {
+  const { email, requestType } = req.body;
+});
+
+app.get("/", async (req, res) => {
+  res.send("SERVE OK");
+});
 
 app.get("/ativar-conta/:token", async (req, res) => {
   try {
