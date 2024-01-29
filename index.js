@@ -155,6 +155,18 @@ app.post("/apagar-usuario", async (req, res) => {
   } else {
     await usuario.destroy();
 
+    Chamados.destroy({
+      where: {
+        email: email,
+      },
+    })
+      .then(() => {
+        console.log("Chamados deletados com sucesso");
+      })
+      .catch((err) => {
+        console.error("Erro ao deletar chamados do usuario:", err);
+      });
+
     //obter uid do usuario
     const uid = usuario.uid;
 
@@ -205,17 +217,6 @@ app.post("/apagar-usuario", async (req, res) => {
         console.error("Erro ao deletar mensagens do usuario:", err);
       });
 
-    Chamados.destroy({
-      where: {
-        email: email,
-      },
-    })
-      .then(() => {
-        console.log("Chamados deletados com sucesso");
-      })
-      .catch((err) => {
-        console.error("Erro ao deletar chamados do usuario:", err);
-      });
     return res.status(200).send("Usuário deletado com sucesso");
   }
 });
