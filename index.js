@@ -140,6 +140,62 @@ app.get("/get_chamados", async (req, res) => {
   }
 });
 
+app.post("/apagar-usuario", async (req, res) => {
+  const { email, authorization } = req.body;
+
+  if (authorization !== "123456") return res.status(200).send("Não autorizado");
+
+  // Verificar se o usuário existe
+  const usuario = await Usuario.findOne({
+    where: { email },
+  });
+
+  if (!usuario) {
+    return res.status(200).send("Usuário não encontrado");
+  } else {
+    await usuario.destroy();
+
+    //obter uid do usuario
+    const uid = usuario.uid;
+
+    Mensagem.destroy({
+      where: {
+        email_sender: email,
+      },
+    })
+      .then(() => {
+        console.log("Mensagens do usuario deletadas com sucesso");
+      })
+      .catch((err) => {
+        console.error("Erro ao deletar mensagens do usuario:", err);
+      });
+
+    Participante.destroy({
+      where: {
+        email: email,
+      },
+    })
+      .then(() => {
+        console.log("Participante deletado com sucesso");
+      })
+      .catch((err) => {
+        console.error("Erro ao deletar mensagens do usuario:", err);
+      });
+
+    Lidas.destroy({
+      where: {
+        uid_user: uid,
+      },
+    })
+      .then(() => {
+        console.log("Mensagens do usuario deletadas com sucesso");
+      })
+      .catch((err) => {
+        console.error("Erro ao deletar mensagens do usuario:", err);
+      });
+    return res.status(200).send("Usuário deletado com sucesso");
+  }
+});
 async function VerificarCodigo(codigo) {
   try {
     // Verifica se o código corresponde na tabela "Chamado"

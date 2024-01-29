@@ -8,6 +8,11 @@
     <title>Lista de Chamados</title>
     <!-- Importe o CDN do Tailwind CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- Importe o CDN do jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI/tZ1a9l4i6of8a3qZgbtvfRn7sZl9wi37XW9GI=" crossorigin="anonymous"></script>
+    <!-- Importe o CDN do SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 
 <body class="bg-gray-100 p-8">
@@ -20,6 +25,7 @@
                     <th class="py-3 px-4 border-b text-left">Solicitação</th>
                     <th class="py-3 px-4 border-b text-left">Código</th>
                     <th class="py-3 px-4 border-b text-left">Status</th>
+                    <th class="py-3 px-4 border-b text-left">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,11 +36,75 @@
                     <td class="py-3 px-4 border-b"><%= chamado.solicitacao %></td>
                     <td class="py-3 px-4 border-b"><%= chamado.codigo %></td>
                     <td class="py-3 px-4 border-b"><%= chamado.status %></td>
+                    <td class="py-3 px-4 border-b">
+                        <% if (chamado.solicitacao === 'unban') { %>
+                        <button class="bg-green-500 text-white px-3 py-1 rounded-md mr-2"
+                            onclick="desbanirUsuario('<%= chamado.email %>')">Desbanir</button>
+                        <% } else { %>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded-md mr-2"
+                            onclick="apagarUsuario('<%= chamado.email %>')">Apagar Usuário</button>
+                        <% } %>
+                        <button class="bg-blue-500 text-white px-3 py-1 rounded-md"
+                            onclick="aprovarChamado('<%= chamado.id %>')">Aprovar</button>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded-md"
+                            onclick="rejeitarChamado('<%= chamado.id %>')">Rejeitar</button>
+                    </td>
                 </tr>
                 <% }); %>
             </tbody>
         </table>
     </div>
+
+    <!-- Adicione scripts para definir ações -->
+    <script>
+        function aprovarChamado(chamadoId) {
+            // Implemente a lógica para aprovar o chamado com o ID chamadoId
+            $.post("/aprovar-chamado", { chamadoId: chamadoId }, function (data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Chamado Aprovado!',
+                    text: 'O chamado foi aprovado com sucesso.',
+                });
+                // Adicione aqui lógica adicional após aprovar o chamado, se necessário
+            });
+        }
+
+        function rejeitarChamado(chamadoId) {
+            // Implemente a lógica para rejeitar o chamado com o ID chamadoId
+            $.post("/rejeitar-chamado", { chamadoId: chamadoId }, function (data) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Chamado Rejeitado!',
+                    text: 'O chamado foi rejeitado.',
+                });
+                // Adicione aqui lógica adicional após rejeitar o chamado, se necessário
+            });
+        }
+
+        function desbanirUsuario(email) {
+            // Implemente a lógica para desbanir o usuário com o email
+            $.post("/desbanir-usuario", { email: email }, function (data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Usuário Desbanido!',
+                    text: 'O usuário foi desbanido com sucesso.',
+                });
+                // Adicione aqui lógica adicional após desbanir o usuário, se necessário
+            });
+        }
+
+        function apagarUsuario(email) {
+            // Implemente a lógica para apagar o usuário com o email
+            $.post("/apagar-usuario", { email: email, authorization: "123456" }, function (data) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Usuário Apagado!',
+                    text: 'O usuário foi apagado.',
+                });
+                // Adicione aqui lógica adicional após apagar o usuário, se necessário
+            });
+        }
+    </script>
 </body>
 
 </html>
