@@ -165,7 +165,6 @@ app.post("/chamado", async (req, res) => {
     const existingChamado = await Chamados.findOne({
       where: {
         email,
-        status: "pendente",
       },
     });
 
