@@ -65,7 +65,6 @@ app.post("/grupo/create", grupoController.criarGrupo);
 app.post("/grupo/list", verificarToken, grupoController.listarGrupos);
 app.post("/reset-senha", usuarioController.redefinirSenha);
 
-
 const transporter = require("./mailer");
 function generateRandomCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -109,7 +108,7 @@ app.post("/chamados_aprove", async (req, res) => {
       `);
     } else {
       // O código não corresponde na tabela "Chamado"
-      return res.status(400).send(`
+      return res.status(200).send(`
         <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
           <p class="font-bold">Erro!</p>
           <p>Código inválido.</p>
@@ -119,7 +118,7 @@ app.post("/chamados_aprove", async (req, res) => {
   } catch (error) {
     // Exibir o erro detalhado
     console.error(error);
-    return res.status(500).send(`
+    return res.status(200).send(`
       <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
         <p class="font-bold">Erro!</p>
         <p>Ocorreu um erro ao verificar o código: ${error.message}</p>
@@ -171,7 +170,7 @@ app.post("/chamado", async (req, res) => {
     });
 
     if (existingChamado) {
-      return res.status(400).send(`
+      return res.status(200).send(`
         <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
           <p class="font-bold">Erro!</p>
           <p>Este email já possui uma solicitação em aberto, atualizações são enviadas ao email.</p>
