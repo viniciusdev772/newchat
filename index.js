@@ -65,12 +65,166 @@ app.post("/grupo/create", grupoController.criarGrupo);
 app.post("/grupo/list", verificarToken, grupoController.listarGrupos);
 app.post("/reset-senha", usuarioController.redefinirSenha);
 
+
+const transporter = require("./mailer");
+function generateRandomCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+app.post("/chamados_aprove", async (req, res) => {
+  try {
+    const { codigo } = req.body;
+
+    if (!codigo) {
+      return res.status(400).send(`
+        <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
+          <p class="font-bold">Erro!</p>
+          <p>O código não foi recebido.</p>
+        </div>
+      `);
+    }
+
+    const chamado = await VerificarCodigo(codigo);
+
+    if (chamado) {
+      const tipoSolicitacao =
+        chamado.solicitacao === "unban"
+          ? "Solicitação de desbanimento de conta"
+          : chamado.solicitacao === "delete"
+          ? "Solicitação de exclusão de conta"
+          : "";
+
+      // Atualize o status do chamado para "aprovada"
+      chamado.status = "aprovada";
+      await chamado.save();
+
+      // Atualize a lógica de retorno conforme necessário
+
+      return res.status(200).send(`
+        <div class="bg-green-200 border-green-600 text-green-600 border-l-4 p-4 mb-4" role="alert">
+          <p class="font-bold">Sucesso!</p>
+          <p>A solicitação foi aprovada com sucesso.</p>
+          <p>Tipo de solicitação: ${tipoSolicitacao}</p>
+        </div>
+      `);
+    } else {
+      // O código não corresponde na tabela "Chamado"
+      return res.status(400).send(`
+        <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
+          <p class="font-bold">Erro!</p>
+          <p>Código inválido.</p>
+        </div>
+      `);
+    }
+  } catch (error) {
+    // Exibir o erro detalhado
+    console.error(error);
+    return res.status(500).send(`
+      <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
+        <p class="font-bold">Erro!</p>
+        <p>Ocorreu um erro ao verificar o código: ${error.message}</p>
+      </div>
+    `);
+  }
+});
+
+async function VerificarCodigo(codigo) {
+  try {
+    // Verifica se o código corresponde na tabela "Chamado"
+    const chamado = await Chamados.findOne({
+      where: {
+        codigo,
+        status: "pendente",
+      },
+    });
+
+    return chamado;
+  } catch (error) {
+    throw error;
+  }
+}
+
 app.post("/chamado", async (req, res) => {
-  const { email, requestType } = req.body;
+  try {
+    const { email, requestType } = req.body;
+
+    const existingUser = await Usuario.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!existingUser) {
+      return res.status(400).send(`
+        <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
+          <p class="font-bold">Erro!</p>
+          <p>O email fornecido não está registrado.</p>
+        </div>
+      `);
+    }
+
+    const existingChamado = await Chamados.findOne({
+      where: {
+        email,
+        status: "pendente",
+      },
+    });
+
+    if (existingChamado) {
+      return res.status(400).send(`
+        <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
+          <p class="font-bold">Erro!</p>
+          <p>Este email já possui uma solicitação em aberto, atualizações são enviadas ao email.</p>
+        </div>
+      `);
+    }
+
+    // Se não houver um chamado pendente e o email existir, continue com o restante do código
+
+    const novoCodigo = generateRandomCode();
+    const novoChamado = await Chamados.create({
+      email,
+      solicitacao: requestType, // Substitua isso pelo campo real correspondente ao tipo de solicitação
+      codigo: novoCodigo,
+      status: "pendente",
+    });
+
+    const link = `https://chat.viniciusdev.com.br/request.html?codigo=${novoCodigo}`;
+
+    const info = await transporter.sendMail({
+      from: "suv@viniciusdev.com.br",
+      to: email,
+      subject: "chamado Update",
+      text: `
+        Sucesso!
+        Sua solicitação foi registrada com sucesso. Um código de confirmação foi enviado para o seu e-mail.
+
+        Verifique sua caixa de entrada e spam para encontrar o e-mail contendo o código de confirmação.
+        O código de confirmação é necessário para validar que a solicitação foi feita por você.
+
+        Clique no link a seguir para confirmar seu chamado:
+        ${link}
+      `,
+    });
+
+    // ... Seu código para criar um novo chamado ou realizar outras ações
+
+    return res.status(200).send(`
+    <div class="bg-green-200 border-green-600 text-green-600 border-l-4 p-4 mb-4" role="alert">
+      <p class="font-bold">Sucesso!</p>
+                                <p>Sua solicitação foi registrada com sucesso. Um código de confirmação foi enviado para o seu e-mail.</p>
+                                <p>Verifique sua caixa de entrada e spam para encontrar o e-mail contendo o código de confirmação.</p>
+                                <p>O código de confirmação é necessário para validar que a solicitação foi feita por você.</p>
+                            </div>
+  `);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erro interno do servidor");
+  }
 });
 
 app.get("/", async (req, res) => {
-  res.send("SERVE OK");
+  res.send("SERVER OK");
 });
 
 app.get("/ativar-conta/:token", async (req, res) => {

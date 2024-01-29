@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Solicitação</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body class="bg-gray-200">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-md mx-auto bg-white p-8 rounded-md shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Confirmação de Solicitação</h2>
+            <form id="confirmacaoForm" class="space-y-4">
+                <div>
+                    <label for="codigo" class="block font-medium text-gray-700">Código de Confirmação</label>
+                    <input type="text" id="codigo" name="codigo" required
+                        class="block w-full border border-gray-300 rounded-md py-2 px-4 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <button type="submit"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Confirmar Solicitação
+                    </button>
+                </div>
+            </form>
+            <div id="resultMessage" class="mt-4"></div>
+            <p class="text-sm text-gray-600 mt-2">
+                Insira o código de confirmação recebido por e-mail para validar a solicitação feita ao seu endereço de
+                e-mail.
+                O código de confirmação é necessário para garantir que a solicitação seja realmente feita pela pessoa
+                proprietária do e-mail.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Preenche o campo de código se a chave "codigo" estiver presente na URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const codigoParam = urlParams.get('codigo');
+            if (codigoParam) {
+                $('#codigo').val(codigoParam);
+            }
+
+            // Event listener para enviar a solicitação via AJAX
+            $('#confirmacaoForm').submit(function (event) {
+                event.preventDefault();
+
+                const codigo = $('#codigo').val();
+
+                // Realiza o envio da solicitação via AJAX
+                $.ajax({
+                    url: '/chamados_aprove',
+                    type: 'POST',
+                    data: { codigo: codigo },
+                    success: function (response) {
+                        $('#resultMessage').html(response);
+                    },
+                    error: function () {
+                        $('#resultMessage').html('Ocorreu um erro ao confirmar a solicitação.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
