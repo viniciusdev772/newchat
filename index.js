@@ -140,6 +140,40 @@ app.get("/get_chamados", async (req, res) => {
   }
 });
 
+app.post("/desbanir-usuario", async (req, res) => {
+  const { email } = req.body;
+
+  // Verificar se o usuário existe
+  const usuario = await Usuario.findOne({
+    where: { email },
+  });
+
+  if (!usuario) {
+    return res.status(200).send("Usuário não encontrado");
+  } else {
+    await usuario.update({ is_banned: false });
+
+    const info = await transporter.sendMail({
+      from: "suv@viniciusdev.com.br",
+      to: email,
+      subject: "Conta Desbanida com sucesso",
+      text: `Prezado Usuário, estamos enviando este email para informar que sua conta foi desbanida com sucesso.
+       Conta: ${email}
+       Conforme solicitado, sua conta foi desbanida com sucesso.
+
+       Etapas que você seguiu para desbanir sua conta:
+        1 - Solicitou o desbanimento de sua conta no site. pelo url: https://chat.viniciusdev.com.br/chamados.html
+        2 - Recebeu um email com um código de confirmação.
+        3 - Confirmou o desbanimento de sua conta. acessando o link do email. validando o código.
+        4 - um Admin confirmou sua solicitação.
+        o que foi desbanido:
+        1 - sua conta
+        
+      `,
+    });
+  }
+});
+
 app.post("/apagar-usuario", async (req, res) => {
   const { email, authorization } = req.body;
 
