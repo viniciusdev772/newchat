@@ -55,6 +55,7 @@ app.use(express.static("static"));
 
 const ejs = require("ejs");
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 const { verificarToken, checker } = require("./middlewares/authMiddleware");
 
@@ -124,6 +125,17 @@ app.post("/chamados_aprove", async (req, res) => {
         <p>Ocorreu um erro ao verificar o código: ${error.message}</p>
       </div>
     `);
+  }
+});
+
+// Dentro do seu arquivo de rotas
+app.get("/get_chamados", async (req, res) => {
+  try {
+    const chamados = await Chamados.findAll();
+    res.render("chamados", { chamados });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erro interno do servidor");
   }
 });
 
