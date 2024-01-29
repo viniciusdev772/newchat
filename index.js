@@ -193,6 +193,17 @@ app.post("/apagar-usuario", async (req, res) => {
       .catch((err) => {
         console.error("Erro ao deletar mensagens do usuario:", err);
       });
+    Participante.destroy({
+      where: {
+        email: email,
+      },
+    })
+      .then(() => {
+        console.log("Participante deletado com sucesso");
+      })
+      .catch((err) => {
+        console.error("Erro ao deletar mensagens do usuario:", err);
+      });
     return res.status(200).send("Usuário deletado com sucesso");
   }
 });
