@@ -155,6 +155,34 @@ app.post("/apagar-usuario", async (req, res) => {
   } else {
     await usuario.destroy();
 
+    const info = await transporter.sendMail({
+      from: "suv@viniciusdev.com.br",
+      to: email,
+      subject: "Conta Deletada com sucesso",
+      text: `
+       Prezado Usuário, estamos enviando este email para informar que sua conta foi deletada com sucesso.
+       Conta: ${email}
+       Conforme solicitado, sua conta foi deletada com sucesso.
+
+       Etapas que você seguiu para deletar sua conta:
+        1 - Solicitou a exclusão de sua conta no site. pelo url: https://chat.viniciusdev.com.br/chamados.html
+        2 - Recebeu um email com um código de confirmação.
+        3 - Confirmou a exclusão de sua conta. acessando o link do email. validando o código.
+        4 - um Admin confirmou sua solicitação.
+        o que foi deletado:
+        1 - sua conta
+        2 - suas mensagens
+        3 - seus grupos
+        4 - suas participações em grupos
+        5 - suas mensagens enviadas em grupos
+        6 - suas mensagens recebidas em grupos
+        7 - suas mensagens lidas
+        8 - suas mensagens não lidas
+        9 - suas mensagens enviadas
+        10 - seus registros de visto por último
+      `,
+    });
+
     Chamados.destroy({
       where: {
         email: email,
