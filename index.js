@@ -14,6 +14,7 @@ const VistoPorUltimo = require("./models/VistoPorUltimo");
 const Chamados = require("./models/Chamados");
 const app = express();
 const PORT = 3001;
+const path = require("path");
 
 const Sequelize = require("sequelize");
 
