@@ -154,7 +154,7 @@ app.post("/chamado", async (req, res) => {
     });
 
     if (!existingUser) {
-      return res.status(400).send(`
+      return res.status(200).send(`
         <div class="bg-red-200 border-red-600 text-red-600 border-l-4 p-4 mb-4" role="alert">
           <p class="font-bold">Erro!</p>
           <p>O email fornecido não está registrado.</p>
