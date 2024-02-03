@@ -10,6 +10,8 @@ const Rastrear = require("../models/Rastrear");
 const htmlTemplate = fs.readFileSync("./static/email.html", "utf-8");
 const htmlTemplateRedefinicao = fs.readFileSync("./static/reset.html", "utf-8");
 
+const JWT = require("../models/JWT");
+
 // Função para gerar um uid aleatório
 function gerarUid() {
   const caracteres =
@@ -133,6 +135,11 @@ async function loginUsuario(req, res) {
             expiresIn: "24h",
           }
         );
+
+        // Salva o token no banco de dados
+        await JWT.create({
+          token,
+        });
 
         console.log("Token gerado:", token);
         console.log("UID:", usuario.uid);

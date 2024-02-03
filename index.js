@@ -16,6 +16,8 @@ const app = express();
 const PORT = 3001;
 const path = require("path");
 
+const JWT = require("./models/JWT");
+
 const Rastrear = require("./models/Rastrear");
 
 const Sequelize = require("sequelize");

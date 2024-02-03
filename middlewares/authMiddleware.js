@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const Usuario = require("../models/Usuario");
-
+const JWT = require("../models/JWT");
 async function verificarToken(req, res, next) {
   // Obtém o token do cabeçalho da requisição
   const token = req.headers.authorization;
@@ -31,7 +31,10 @@ async function verificarToken(req, res, next) {
           if (!usuario) {
             return res
               .status(403)
-              .json({ valid : false, message: "UID não encontrado no banco de dados." });
+              .json({
+                valid: false,
+                message: "UID não encontrado no banco de dados.",
+              });
           }
 
           // Adiciona o UID decodificado à requisição para uso posterior
@@ -52,8 +55,6 @@ async function verificarToken(req, res, next) {
   }
 }
 
-
-
 async function checker(req, res, next) {
   // Obtém o token do cabeçalho da requisição
   const token = req.headers.authorization;
@@ -73,7 +74,9 @@ async function checker(req, res, next) {
       { algorithms: ["ES256"] },
       async (err, decoded) => {
         if (err) {
-          return res.status(403).json({ valid : false, message: "Token inválido." });
+          return res
+            .status(403)
+            .json({ valid: false, message: "Token inválido." });
         }
 
         // Verifica se o UID está no banco de dados
@@ -83,11 +86,28 @@ async function checker(req, res, next) {
           if (!usuario) {
             return res
               .status(403)
-              .json({ valid : false, message: "UID não encontrado no banco de dados." });
-          }else{
-            return res
-              .status(200)
-              .json({ valid : true, message: "UID encontrado no banco de dados." });
+              .json({
+                valid: false,
+                message: "UID não encontrado no banco de dados.",
+              });
+          } else {
+            //verifica se o token está no banco de dados
+            const token = await JWT.findOne({ token: token });
+            if (!token) {
+              return res
+                .status(200)
+                .json({
+                  valid: false,
+                  message: "Token não encontrado no banco de dados.",
+                });
+            } else {
+              return res
+                .status(200)
+                .json({
+                  valid: true,
+                  message: "UID encontrado no banco de dados.",
+                });
+            }
           }
 
           // Adiciona o UID decodificado à requisição para uso posterior
@@ -97,17 +117,22 @@ async function checker(req, res, next) {
           console.error(error);
           return res
             .status(500)
-            .json({ valid : false, message: "Erro ao verificar o UID no banco de dados." });
+            .json({
+              valid: false,
+              message: "Erro ao verificar o UID no banco de dados.",
+            });
         }
       }
     );
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ valid : false, message: "Erro ao verificar o token." });
+    return res
+      .status(500)
+      .json({ valid: false, message: "Erro ao verificar o token." });
   }
 }
 
 module.exports = {
   verificarToken,
-  checker
+  checker,
 };
