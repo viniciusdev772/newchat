@@ -61,7 +61,6 @@ async function criarUsuario(req, res) {
 
     const moment = require("moment-timezone");
 
-
     const now = moment().tz("America/Sao_Paulo");
 
     const rastrear = await Rastrear.create({
@@ -75,11 +74,12 @@ async function criarUsuario(req, res) {
       from: "suv@viniciusdev.com.br",
       to: email,
       subject: "Ativação de Conta",
-      html: htmlTemplate.replace(
-        "link_ativacao",
-        `http://${dominioAtual}/ativar-conta/${token}`,
-      )
-      .replace("link_rastreio", link_rastreio)
+      html: htmlTemplate
+        .replace(
+          "link_ativacao",
+          `http://${dominioAtual}/ativar-conta/${token}`
+        )
+        .replace("link_rastreio", link_rastreio),
     });
 
     console.log("E-mail de ativação enviado:", info);
@@ -188,8 +188,6 @@ async function redefinirSenha(req, res) {
       // Envia um e-mail com o link para a página de redefinição de senha
       const dominioAtual = req.hostname;
       const linkRedefinicao = `http://${dominioAtual}/redefinir-senha/${token}`;
-
-      
 
       const info = await transporter.sendMail({
         from: "suv@viniciusdev.com.br",
