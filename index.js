@@ -534,70 +534,31 @@ wss.on("connection", async (ws, req) => {
   const uid = req.headers["uid"];
 
 
+  VistoPorUltimo.create({
+    uid: uid,
+    hora: "online",
+  });
+
+  const vist = await VistoPorUltimo.findOne({
+    where: { uid: uid },
+  });
+
   console.log("Usuario de uid " + uid + " conectou. ");
 
   const ms = now.valueOf();
 
-  VistoPorUltimo.destroy({
-    where: {
-      uid: uid,
-    },
-  })
-    .then(() => {
-      return VistoPorUltimo.create({
-        uid: uid,
-        hora: "online",
-      });
-    })
-    .then(() => {
-      console.log("Registro visto por último criado com sucesso.");
-    })
-    .catch((err) => {
-      console.error("Erro ao excluir ou criar registros:", err);
-    });
-
+  
   ws.on("close", () => {
     const now = moment().tz("America/Sao_Paulo");
     console.log("Usuario de uid CLose " + uid + " desconectou. ");
-    VistoPorUltimo.destroy({
-      where: {
-        uid: uid,
-      },
-    })
-      .then(() => {
-        return VistoPorUltimo.create({
-          uid: uid,
-          hora: now.valueOf(),
-        });
-      })
-      .then(() => {
-        console.log("Registro visto por último criado com sucesso.");
-      })
-      .catch((err) => {
-        console.error("Erro ao excluir ou criar registros:", err);
-      });
+    vist.hora = moment().tz("America/Sao_Paulo").valueOf();
+    vist.save();
   });
   ws.on("disconnect", () => {
     const now = moment().tz("America/Sao_Paulo");
     console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
-
-    VistoPorUltimo.destroy({
-      where: {
-        uid: uid,
-      },
-    })
-      .then(() => {
-        return VistoPorUltimo.create({
-          uid: uid,
-          hora: now.valueOf(),
-        });
-      })
-      .then(() => {
-        console.log("Registro visto por último criado com sucesso.");
-      })
-      .catch((err) => {
-        console.error("Erro ao excluir ou criar registros:", err);
-      });
+    vist.hora = moment().tz("America/Sao_Paulo").valueOf();
+    vist.save();
   });
 
   try {
