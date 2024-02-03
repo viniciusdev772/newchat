@@ -3,7 +3,7 @@ const sequelize = require("../sequelize");
 
 const JWT = sequelize.define("JWT", {
   token: {
-    type: Sequelize.STRING(255),
+    type: Sequelize.TEXT,
     allowNull: false,
   },
 });
