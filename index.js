@@ -533,6 +533,9 @@ wss.on("connection", async (ws, req) => {
   const grupo = req.headers["grupo"];
   const uid = req.headers["uid"];
 
+
+  console.log("Usuario de uid " + uid + " conectou. ");
+
   const ms = now.valueOf();
 
   VistoPorUltimo.destroy({
