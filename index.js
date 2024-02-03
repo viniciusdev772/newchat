@@ -549,12 +549,18 @@ wss.on("connection", async (ws, req) => {
 
   
   ws.on("close", () => {
+    vist =  VistoPorUltimo.findOne({
+      where: { uid: uid },
+    });
     const now = moment().tz("America/Sao_Paulo");
     console.log("Usuario de uid CLose " + uid + " desconectou. ");
     vist.hora = moment().tz("America/Sao_Paulo").valueOf();
     vist.save();
   });
   ws.on("disconnect", () => {
+    vist =  VistoPorUltimo.findOne({
+      where: { uid: uid },
+    });
     const now = moment().tz("America/Sao_Paulo");
     console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
     vist.hora = moment().tz("America/Sao_Paulo").valueOf();
