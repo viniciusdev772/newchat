@@ -534,10 +534,25 @@ wss.on("connection", async (ws, req) => {
   const uid = req.headers["uid"];
 
 
-  VistoPorUltimo.create({
-    uid: uid,
-    hora: "online",
-  });
+ // Tentando encontrar um registro existente ou criar um novo se não existir
+VistoPorUltimo.findOrCreate({
+  where: { uid: uid }, // Critérios de busca baseados no uid
+  defaults: {
+      // Os valores padrão para a criação do registro, usados apenas se um novo registro for criado
+      uid: uid,
+      hora: moment().tz("America/Sao_Paulo").valueOf() // Supondo que você queira salvar a hora atual
+  }
+}).then(([vistoPorUltimo, created]) => {
+  if (created) {
+      console.log(`Um novo registro para o uid ${uid} foi criado.`);
+  } else {
+      console.log(`Um registro para o uid ${uid} já existe.`);
+  }
+}).catch(erro => {
+  // Capturando e logando qualquer erro que ocorra durante o processo
+  console.error(`Erro ao encontrar ou criar o visto por último para o uid ${uid}:`, erro);
+});
+
 
   const vist = await VistoPorUltimo.findOne({
     where: { uid: uid },
