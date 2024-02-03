@@ -84,7 +84,10 @@ app.get("/rastrear/:email", async (req, res) => {
 
     // Verifica se o registro foi encontrado antes de tentar atualizá-lo
     if (rastrear) {
-      rastrear.aberto_em = moment().tz("America/Sao_Paulo").toDate(); // Certifique-se de converter o momento para um objeto Date
+
+      const now = moment().tz("America/Sao_Paulo");
+      
+      rastrear.aberto_em = now.valueOf(); // Certifique-se de converter o momento para um objeto Date
       await rastrear.save();
       res.send("Rastreamento atualizado com sucesso."); // Resposta de sucesso
     } else {
