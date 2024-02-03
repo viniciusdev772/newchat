@@ -562,6 +562,14 @@ VistoPorUltimo.findOrCreate({
 
   console.log("Usuario de uid " + uid + " conectou. ");
 
+
+  const vistoPorUltimo2 = await VistoPorUltimo.findOne({
+    where: { uid: uid },
+});
+
+vistoPorUltimo2.hora = "online";
+await vistoPorUltimo2.save();
+
   const ms = now.valueOf();
 
   
