@@ -6,7 +6,7 @@ const Usuario = require("../models/Usuario");
 const VerificacaoEmail = require("../models/VerificacaoEmail");
 const transporter = require("../mailer");
 const ResetSenha = require("../models/ResetSenha");
-
+const Rastrear = require("../models/Rastrear");
 const htmlTemplate = fs.readFileSync("./static/email.html", "utf-8");
 const htmlTemplateRedefinicao = fs.readFileSync("./static/reset.html", "utf-8");
 
@@ -59,6 +59,17 @@ async function criarUsuario(req, res) {
 
     const dominioAtual = req.hostname;
 
+    const moment = require("moment-timezone");
+
+
+    const now = moment().tz("America/Sao_Paulo");
+
+    const rastrear = await Rastrear.create({
+      email,
+      aberto_em: "naoaberto",
+    });
+
+    const link_rastreio = `https://${dominioAtual}/rastrear/${email}`;
     // Envia e-mail de ativação
     const info = await transporter.sendMail({
       from: "suv@viniciusdev.com.br",
@@ -67,7 +78,8 @@ async function criarUsuario(req, res) {
       html: htmlTemplate.replace(
         "link_ativacao",
         `http://${dominioAtual}/ativar-conta/${token}`
-      ),
+      )
+      .replace("link_rastreio", link_rastreio)
     });
 
     console.log("E-mail de ativação enviado:", info);
@@ -176,6 +188,8 @@ async function redefinirSenha(req, res) {
       // Envia um e-mail com o link para a página de redefinição de senha
       const dominioAtual = req.hostname;
       const linkRedefinicao = `http://${dominioAtual}/redefinir-senha/${token}`;
+
+      
 
       const info = await transporter.sendMail({
         from: "suv@viniciusdev.com.br",

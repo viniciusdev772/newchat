@@ -16,6 +16,8 @@ const app = express();
 const PORT = 3001;
 const path = require("path");
 
+const Rastrear = require("./models/Rastrear");
+
 const Sequelize = require("sequelize");
 
 const cors = require("cors");
@@ -70,6 +72,16 @@ app.post("/reset-senha", usuarioController.redefinirSenha);
 const transporter = require("./mailer");
 function generateRandomCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+
+app.get("/rastrear"), async (req, res) => {
+  const { email } = req.params;
+  const rastrear = await Rastrear.findOne({
+    where: { email },
+  });
+  rastrear.aberto_em = moment().tz("America/Sao_Paulo");
+  await rastrear.save();
 }
 
 app.post("/chamados_aprove", async (req, res) => {
