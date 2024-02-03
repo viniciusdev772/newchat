@@ -77,7 +77,7 @@ async function criarUsuario(req, res) {
       subject: "Ativação de Conta",
       html: htmlTemplate.replace(
         "link_ativacao",
-        `http://${dominioAtual}/ativar-conta/${token}`
+        `http://${dominioAtual}/ativar-conta/${token}`,
       )
       .replace("link_rastreio", link_rastreio)
     });

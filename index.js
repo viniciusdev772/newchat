@@ -75,15 +75,26 @@ function generateRandomCode() {
 }
 
 
-app.get("/rastrear"), async (req, res) => {
-  const { email } = req.params;
-  const rastrear = await Rastrear.findOne({
-    where: { email },
-  });
-  rastrear.aberto_em = moment().tz("America/Sao_Paulo");
-  await rastrear.save();
-}
+app.get("/rastrear/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const rastrear = await Rastrear.findOne({
+      where: { email },
+    });
 
+    // Verifica se o registro foi encontrado antes de tentar atualizá-lo
+    if (rastrear) {
+      rastrear.aberto_em = moment().tz("America/Sao_Paulo").toDate(); // Certifique-se de converter o momento para um objeto Date
+      await rastrear.save();
+      res.send("Rastreamento atualizado com sucesso."); // Resposta de sucesso
+    } else {
+      res.status(404).send("Email não encontrado."); // Caso o e-mail não seja encontrado
+    }
+  } catch (error) {
+    console.error("Erro ao rastrear:", error);
+    res.status(500).send("Erro interno do servidor.");
+  }
+});
 app.post("/chamados_aprove", async (req, res) => {
   try {
     const { codigo } = req.body;
