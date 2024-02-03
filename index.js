@@ -540,7 +540,7 @@ VistoPorUltimo.findOrCreate({
   defaults: {
       // Os valores padrão para a criação do registro, usados apenas se um novo registro for criado
       uid: uid,
-      hora: moment().tz("America/Sao_Paulo").valueOf() // Supondo que você queira salvar a hora atual
+      hora: 'online' // Supondo que você queira salvar a hora atual
   }
 }).then(([vistoPorUltimo, created]) => {
   if (created) {
