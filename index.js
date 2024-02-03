@@ -92,7 +92,7 @@ app.get("/rastrear/:email", async (req, res) => {
     }
   } catch (error) {
     console.error("Erro ao rastrear:", error);
-    res.status(500).send("Erro interno do servidor.");
+    res.status(500).send(error.message);
   }
 });
 app.post("/chamados_aprove", async (req, res) => {
