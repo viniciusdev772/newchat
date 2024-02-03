@@ -548,24 +548,62 @@ wss.on("connection", async (ws, req) => {
   const ms = now.valueOf();
 
   
-  ws.on("close", () => {
-    vist =  VistoPorUltimo.findOne({
-      where: { uid: uid },
-    });
-    const now = moment().tz("America/Sao_Paulo");
-    console.log("Usuario de uid CLose " + uid + " desconectou. ");
-    vist.hora = moment().tz("America/Sao_Paulo").valueOf();
-    vist.save();
-  });
-  ws.on("disconnect", () => {
-    vist =  VistoPorUltimo.findOne({
-      where: { uid: uid },
-    });
-    const now = moment().tz("America/Sao_Paulo");
-    console.log("Usuario de uid Disconnect " + uid + " desconectou. ");
-    vist.hora = moment().tz("America/Sao_Paulo").valueOf();
-    vist.save();
-  });
+ // Utilizando uma função assíncrona para lidar com operações de banco de dados
+ws.on("close", async () => {
+  try {
+      // Buscando o registro de 'VistoPorUltimo' pelo 'uid' de forma assíncrona
+      const vistoPorUltimo = await VistoPorUltimo.findOne({
+          where: { uid: uid },
+      });
+
+      // Checando se o registro foi encontrado antes de tentar atualizá-lo
+      if (vistoPorUltimo) {
+          // Obtendo o horário atual no fuso horário de São Paulo
+          const agora = moment().tz("America/Sao_Paulo").valueOf();
+
+          console.log(`Usuario de uid ${uid} desconectou.`);
+
+          // Atualizando o horário de 'visto por último' para o horário atual
+          vistoPorUltimo.hora = agora;
+          await vistoPorUltimo.save();
+      } else {
+          // Caso não encontre um registro, pode-se logar ou tomar outra ação
+          console.log(`Nenhum registro encontrado para o uid: ${uid}`);
+      }
+  } catch (erro) {
+      // Capturando e logando qualquer erro que ocorra durante o processo
+      console.error(`Erro ao atualizar o visto por último para o uid ${uid}:`, erro);
+  }
+});
+
+  // Utilizando uma função assíncrona para lidar com operações de banco de dados
+ws.on("disconnect", async () => {
+  try {
+      // Buscando o registro de 'VistoPorUltimo' pelo 'uid' de forma assíncrona
+      const vistoPorUltimo = await VistoPorUltimo.findOne({
+          where: { uid: uid },
+      });
+
+      // Checando se o registro foi encontrado antes de tentar atualizá-lo
+      if (vistoPorUltimo) {
+          // Obtendo o horário atual no fuso horário de São Paulo
+          const agora = moment().tz("America/Sao_Paulo").valueOf();
+
+          console.log(`Usuario de uid ${uid} desconectou.`);
+
+          // Atualizando o horário de 'visto por último' para o horário atual
+          vistoPorUltimo.hora = agora;
+          await vistoPorUltimo.save();
+      } else {
+          // Caso não encontre um registro, pode-se logar ou tomar outra ação
+          console.log(`Nenhum registro encontrado para o uid: ${uid}`);
+      }
+  } catch (erro) {
+      // Capturando e logando qualquer erro que ocorra durante o processo
+      console.error(`Erro ao atualizar o visto por último para o uid ${uid}:`, erro);
+  }
+});
+
 
   try {
     const mensagen4s = await Mensagem.findAll({
