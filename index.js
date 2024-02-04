@@ -530,8 +530,11 @@ const MensagemData = {
   hora: 0,
 };
 wss.on("connection", async (ws, req) => {
-  const grupo = req.headers["grupo"];
-  const uid = req.headers["uid"];
+  // const grupo = req.headers["grupo"];
+  // const uid = req.headers["uid"];
+
+  //obter dos parametros
+  const { grupo, uid } = req.params;
 
   // Tentando encontrar um registro existente ou criar um novo se não existir
   // Tentando encontrar um registro existente ou criar um novo se não existir
