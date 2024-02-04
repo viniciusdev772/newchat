@@ -29,12 +29,10 @@ async function verificarToken(req, res, next) {
           const usuario = await Usuario.findOne({ uid: decoded.uid });
 
           if (!usuario) {
-            return res
-              .status(403)
-              .json({
-                valid: false,
-                message: "UID não encontrado no banco de dados.",
-              });
+            return res.status(403).json({
+              valid: false,
+              message: "UID não encontrado no banco de dados.",
+            });
           }
 
           // Adiciona o UID decodificado à requisição para uso posterior
@@ -84,29 +82,23 @@ async function checker(req, res, next) {
           const usuario = await Usuario.findOne({ uid: decoded.uid });
 
           if (!usuario) {
-            return res
-              .status(403)
-              .json({
-                valid: false,
-                message: "UID não encontrado no banco de dados.",
-              });
+            return res.status(403).json({
+              valid: false,
+              message: "UID não encontrado no banco de dados.",
+            });
           } else {
             //verifica se o token está no banco de dados
-            const token = await JWT.findOne({ token: token });
-            if (!token) {
-              return res
-                .status(200)
-                .json({
-                  valid: false,
-                  message: "Token não encontrado no banco de dados.",
-                });
+            const token77 = await JWT.findOne({ token: token });
+            if (!token77) {
+              return res.status(200).json({
+                valid: false,
+                message: "Token não encontrado no banco de dados.",
+              });
             } else {
-              return res
-                .status(200)
-                .json({
-                  valid: true,
-                  message: "UID encontrado no banco de dados.",
-                });
+              return res.status(200).json({
+                valid: true,
+                message: "UID encontrado no banco de dados.",
+              });
             }
           }
 
@@ -115,12 +107,10 @@ async function checker(req, res, next) {
           next();
         } catch (error) {
           console.error(error);
-          return res
-            .status(500)
-            .json({
-              valid: false,
-              message: "Erro ao verificar o UID no banco de dados.",
-            });
+          return res.status(500).json({
+            valid: false,
+            message: "Erro ao verificar o UID no banco de dados.",
+          });
         }
       }
     );
