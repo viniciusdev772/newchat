@@ -534,7 +534,16 @@ wss.on("connection", async (ws, req) => {
   // const uid = req.headers["uid"];
 
   //obter dos parametros
-  const { grupo, uid } = req.params;
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const params = url.searchParams;
+
+  // Extrair os parâmetros grupo e uid
+  const grupo = params.get("grupo");
+  const uid = params.get("uid");
+
+  console.log("Grupo: ", grupo);
+  console.log("UID: ", uid);
+  
 
   // Tentando encontrar um registro existente ou criar um novo se não existir
   // Tentando encontrar um registro existente ou criar um novo se não existir
