@@ -72,9 +72,7 @@ async function checker(req, res, next) {
       { algorithms: ["ES256"] },
       async (err, decoded) => {
         if (err) {
-          return res
-            .status(403)
-            .json({ valid: false, message: "Token inválido." });
+          return res.json({ valid: false, message: "Token inválido." });
         }
 
         // Verifica se o UID está no banco de dados
@@ -90,7 +88,7 @@ async function checker(req, res, next) {
             //verifica se o token está no banco de dados
             const token77 = await JWT.findOne({ token: token });
             if (!token77) {
-              return res.status(200).json({
+              return res.json({
                 valid: false,
                 message: "Token não encontrado no banco de dados.",
               });
@@ -107,7 +105,7 @@ async function checker(req, res, next) {
           next();
         } catch (error) {
           console.error(error);
-          return res.status(500).json({
+          return res.json({
             valid: false,
             message: "Erro ao verificar o UID no banco de dados.",
           });
@@ -116,9 +114,7 @@ async function checker(req, res, next) {
     );
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ valid: false, message: "Erro ao verificar o token." });
+    return res.json({ valid: false, message: "Erro ao verificar o token." });
   }
 }
 

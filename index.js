@@ -543,7 +543,6 @@ wss.on("connection", async (ws, req) => {
 
   console.log("Grupo: ", grupo);
   console.log("UID: ", uid);
-  
 
   // Tentando encontrar um registro existente ou criar um novo se não existir
   // Tentando encontrar um registro existente ou criar um novo se não existir
