@@ -14,7 +14,7 @@ class MailerSendService {
 
   async sendEmail() {
     try {
-      const sentFrom = new Sender("MS_zo0u4y@vdevapi.online");
+      const sentFrom = new Sender("MS_f6IOcU@vdevapi.online");
 
       const recipients = [new Recipient(this.recipientEmail, "Recipient Name")];
 
