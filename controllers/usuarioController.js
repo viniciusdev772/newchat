@@ -12,6 +12,14 @@ const htmlTemplateRedefinicao = fs.readFileSync("./static/reset.html", "utf-8");
 
 const JWT = require("../models/JWT");
 
+const Recipient = require("mailersend").Recipient;
+const EmailParams = require("mailersend").EmailParams;
+const MailerSend = require("mailersend");
+
+const mailersend = new MailerSend({
+  api_key: "key",
+});
+
 // Função para gerar um uid aleatório
 function gerarUid() {
   const caracteres =
@@ -192,6 +200,8 @@ async function redefinirSenha(req, res) {
         expiresAt: expiracao,
       });
 
+      const recipients = [new Recipient(email, "Your Client")];
+
       // Envia um e-mail com o link para a página de redefinição de senha
       const dominioAtual = req.hostname;
       const linkRedefinicao = `http://${dominioAtual}/redefinir-senha/${token}`;
@@ -205,6 +215,29 @@ async function redefinirSenha(req, res) {
           linkRedefinicao
         ),
       });
+
+      const mailersend = new MailerSend({
+        api_key:
+          "mlsn.b01697c6fc25be51db2b59139a980dba3466be29ed57115105108d383eccd1c2",
+      });
+      const personalization = [
+        {
+          email: email,
+          data: {
+            link: linkRedefinicao,
+          },
+        },
+      ];
+
+      const emailParams = new EmailParams()
+        .setFrom("yMS_zo0u4y@vdevapi.online")
+        .setFromName("Your Name")
+        .setRecipients(recipients)
+        .setSubject("Subject")
+        .setTemplateId("z3m5jgrnqnzldpyo")
+        .setPersonalization(personalization);
+
+      mailersend.send(emailParams);
 
       console.log("E-mail de redefinição de senha enviado:", info);
 
