@@ -1,9 +1,7 @@
 // mailersend.js
 
 // Importar as dependências necessárias
-const Recipient = require("mailersend").Recipient;
-const EmailParams = require("mailersend").EmailParams;
-const MailerSend = require("mailersend");
+const { Recipient, EmailParams, MailerSend } = require("mailersend");
 
 // Criar uma classe para facilitar o envio de e-mails usando MailerSend
 class MailerSendService {
