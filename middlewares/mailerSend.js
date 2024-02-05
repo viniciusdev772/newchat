@@ -5,10 +5,9 @@ const { Recipient, EmailParams, MailerSend } = require("mailersend");
 
 // Criar uma classe para facilitar o envio de e-mails usando MailerSend
 class MailerSendService {
-  constructor(recipientEmail, recipientName, link) {
+  constructor(apiKey, recipientEmail, recipientName, link) {
     this.mailerSend = new MailerSend({
-      api_key:
-        "mlsn.3be5849ceb6fae0a5eecae06cbaed4989c78485f90af3c5dadccd44465a278c3",
+      api_key: apiKey,
     });
     this.recipientEmail = recipientEmail;
     this.recipientName = recipientName;

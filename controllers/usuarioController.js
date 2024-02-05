@@ -209,6 +209,7 @@ async function redefinirSenha(req, res) {
       });
 
       const mailerSendService = new MailerSendService(
+        "mlsn.3be5849ceb6fae0a5eecae06cbaed4989c78485f90af3c5dadccd44465a278c3",
         email,
         "Usuário",
         linkRedefinicao
