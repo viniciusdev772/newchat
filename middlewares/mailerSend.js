@@ -16,9 +16,7 @@ class MailerSendService {
 
   async sendEmail() {
     try {
-      const recipients = [
-        new Recipient(this.recipientEmail, this.recipientName),
-      ];
+      const recipients = [new Recipient(this.recipientEmail, "Usuário")];
 
       const personalization = [
         {
@@ -31,7 +29,6 @@ class MailerSendService {
 
       const emailParams = new EmailParams()
         .setFrom("MS_zo0u4y@vdevapi.online")
-        .setFromName("Seu Nome")
         .setRecipients(recipients)
         .setSubject("Assunto")
         .setTemplateId("z3m5jgrnqnzldpyo")
