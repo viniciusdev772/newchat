@@ -16,10 +16,6 @@ const Recipient = require("mailersend").Recipient;
 const EmailParams = require("mailersend").EmailParams;
 const MailerSend = require("mailersend");
 
-const mailersend = new MailerSend({
-  api_key: "key",
-});
-
 // Função para gerar um uid aleatório
 function gerarUid() {
   const caracteres =
