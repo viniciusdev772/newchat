@@ -462,58 +462,37 @@ app.get("/redefinir-senha/:token", async (req, res) => {
 
 app.get("/check_jwt", checker);
 
+const bcrypt = require('bcrypt');
+
 app.post("/api/redefinir-senha/:token", async (req, res) => {
   try {
     const { token } = req.params;
-    const { novaSenha } = req.body;
+    let { novaSenha } = req.body;
 
-    // Buscar a entrada no modelo ResetSenha com base no token
-    const resetSenhaEntry = await ResetSenha.findOne({
-      where: { token },
-    });
+    const resetSenhaEntry = await ResetSenha.findOne({ where: { token } });
 
     if (!resetSenhaEntry || resetSenhaEntry.expiresAt < new Date()) {
-      return res
-        .status(401)
-        .json({ sucesso: false, message: "Token inválido ou expirado." });
+      return res.status(401).json({ sucesso: false, message: "Token inválido ou expirado." });
     }
 
-    //resetSenhaEntry.userUid
-    // Atualizar a senha do usuário
-    const usuario = await Usuario.findOne(
-      { where: { uid: resetSenhaEntry.userUid } },
-      { raw: true }
-    );
+    const usuario = await Usuario.findOne({ where: { uid: resetSenhaEntry.userUid } });
 
     if (!usuario) {
-      return res
-        .status(404)
-        .json({ sucesso: false, message: "Usuário não encontrado." });
+      return res.status(404).json({ sucesso: false, message: "Usuário não encontrado." });
     }
 
-    // Criptografar a nova senha antes de salvar
-
-    const bcrypt = require('bcrypt');
-
-    novaSenha = await bcrypt.hash(novaSenha, 10);
-
-    const senhaCriptografada = novaSenha;
+    const senhaCriptografada = await bcrypt.hash(novaSenha, 10);
 
     await usuario.update({ senha: senhaCriptografada });
 
-    // Remover a entrada de reset de senha, pois não é mais necessária
     await resetSenhaEntry.destroy();
 
     res.json({ sucesso: true, message: "Senha redefinida com sucesso!" });
   } catch (error) {
     console.error("Erro ao redefinir a senha:", error);
-    res.status(500).json({
-      sucesso: false,
-      message: "Erro ao redefinir a senha. Tente novamente mais tarde.",
-    });
+    res.status(500).json({ sucesso: false, message: "Erro ao redefinir a senha. Tente novamente mais tarde." });
   }
 });
-
 app.get("/novidades", verificarToken, async (req, res) => {
   try {
     const novidades = await Novidade.findAll();
