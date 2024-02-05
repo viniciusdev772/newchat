@@ -209,7 +209,7 @@ async function redefinirSenha(req, res) {
       });
 
       const mailerSendService = new MailerSendService(
-        "mlsn.3be5849ceb6fae0a5eecae06cbaed4989c78485f90af3c5dadccd44465a278c3",
+        "mlsn.9e139c6ab8ba78d58c9c92074455ef5da706fb7993ed5f3176eb1caa8e379916",
         email,
         linkRedefinicao
       );
