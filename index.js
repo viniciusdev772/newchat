@@ -493,6 +493,8 @@ app.post("/api/redefinir-senha/:token", async (req, res) => {
 
     // Criptografar a nova senha antes de salvar
 
+    const bcrypt = require('bcrypt');
+
     novaSenha = await bcrypt.hash(novaSenha, 10);
 
     const senhaCriptografada = novaSenha;
