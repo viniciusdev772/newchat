@@ -191,6 +191,7 @@ async function redefinirSenha(req, res) {
         userUid: usuario.uid,
         expiresAt: expiracao,
       });
+      const Recipient = require("mailersend").Recipient;
 
       const recipients = [new Recipient(email, "Your Client")];
 
@@ -208,7 +209,6 @@ async function redefinirSenha(req, res) {
         ),
       });
 
-      const Recipient = require("mailersend").Recipient;
       const EmailParams = require("mailersend").EmailParams;
       const MailerSend = require("mailersend");
 
