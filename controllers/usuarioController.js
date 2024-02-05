@@ -10,6 +10,8 @@ const Rastrear = require("../models/Rastrear");
 const htmlTemplate = fs.readFileSync("./static/email.html", "utf-8");
 const htmlTemplateRedefinicao = fs.readFileSync("./static/reset.html", "utf-8");
 
+const MailerSendService = require("../middlewares/mailerSend");
+
 const JWT = require("../models/JWT");
 
 // Função para gerar um uid aleatório
@@ -206,33 +208,20 @@ async function redefinirSenha(req, res) {
         ),
       });
 
-      const Recipient = require("mailersend").Recipient;
-      const EmailParams = require("mailersend").EmailParams;
-      const MailerSend = require("mailersend");
+      const mailerSendService = new MailerSendService(
+        email,
+        "Usuário",
+        linkRedefinicao
+      );
 
-      const mailersend = new MailerSend({
-        api_key:
-          "mlsn.b01697c6fc25be51db2b59139a980dba3466be29ed57115105108d383eccd1c2",
-      });
-      const recipients = [new Recipient(email, "Your Client")];
-      const personalization = [
-        {
-          email: email,
-          data: {
-            link: linkRedefinicao,
-          },
-        },
-      ];
-
-      const emailParams = new EmailParams()
-        .setFrom("yMS_zo0u4y@vdevapi.online")
-        .setFromName("Your Name")
-        .setRecipients(recipients)
-        .setSubject("Subject")
-        .setTemplateId("z3m5jgrnqnzldpyo")
-        .setPersonalization(personalization);
-
-      mailersend.send(emailParams);
+      mailerSendService
+        .sendEmail()
+        .then((response) => {
+          console.log("E-mail enviado com sucesso:", response);
+        })
+        .catch((error) => {
+          console.error("Erro ao enviar e-mail:", error);
+        });
 
       console.log("E-mail de redefinição de senha enviado:", info);
 
