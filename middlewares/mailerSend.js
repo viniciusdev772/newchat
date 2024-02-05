@@ -1,7 +1,8 @@
 // mailersend.js
 
-const { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+//const { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
+const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 class MailerSendService {
   constructor(apiKey, recipientEmail, link) {
     this.mailerSend = new MailerSend({
