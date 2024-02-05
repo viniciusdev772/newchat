@@ -1,6 +1,6 @@
 // mailersend.js
 
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+const { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 class MailerSendService {
   constructor(apiKey, recipientEmail, link) {
