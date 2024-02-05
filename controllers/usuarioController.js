@@ -191,9 +191,6 @@ async function redefinirSenha(req, res) {
         userUid: usuario.uid,
         expiresAt: expiracao,
       });
-      const Recipient = require("mailersend").Recipient;
-
-      const recipients = [new Recipient(email, "Your Client")];
 
       // Envia um e-mail com o link para a página de redefinição de senha
       const dominioAtual = req.hostname;
@@ -209,6 +206,7 @@ async function redefinirSenha(req, res) {
         ),
       });
 
+      const Recipient = require("mailersend").Recipient;
       const EmailParams = require("mailersend").EmailParams;
       const MailerSend = require("mailersend");
 
@@ -216,6 +214,7 @@ async function redefinirSenha(req, res) {
         api_key:
           "mlsn.b01697c6fc25be51db2b59139a980dba3466be29ed57115105108d383eccd1c2",
       });
+      const recipients = [new Recipient(email, "Your Client")];
       const personalization = [
         {
           email: email,
