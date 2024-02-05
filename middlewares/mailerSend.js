@@ -27,7 +27,6 @@ class MailerSendService {
       const emailParams = new EmailParams()
         .setFrom(sentFrom)
         .setTo(recipients)
-        .setReplyTo(sentFrom)
         .setTemplateId("z3m5jgrnqnzldpyo")
         .setPersonalization(personalization)
         .setSubject("REDEIFINIÇÃO DE SENHA");
