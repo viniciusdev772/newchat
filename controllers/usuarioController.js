@@ -12,10 +12,6 @@ const htmlTemplateRedefinicao = fs.readFileSync("./static/reset.html", "utf-8");
 
 const JWT = require("../models/JWT");
 
-const Recipient = require("mailersend").Recipient;
-const EmailParams = require("mailersend").EmailParams;
-const MailerSend = require("mailersend");
-
 // Função para gerar um uid aleatório
 function gerarUid() {
   const caracteres =
@@ -211,6 +207,10 @@ async function redefinirSenha(req, res) {
           linkRedefinicao
         ),
       });
+
+      const Recipient = require("mailersend").Recipient;
+      const EmailParams = require("mailersend").EmailParams;
+      const MailerSend = require("mailersend");
 
       const mailersend = new MailerSend({
         api_key:
