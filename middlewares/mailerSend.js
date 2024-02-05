@@ -1,40 +1,37 @@
 // mailersend.js
 
-// Importar as dependências necessárias
-const { Recipient, EmailParams, MailerSend } = require("mailersend");
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
-// Criar uma classe para facilitar o envio de e-mails usando MailerSend
 class MailerSendService {
-  constructor(apiKey, recipientEmail, recipientName, link) {
+  constructor(apiKey, recipientEmail, link) {
     this.mailerSend = new MailerSend({
-      api_key: apiKey,
+      apiKey: apiKey,
     });
     this.recipientEmail = recipientEmail;
-    this.recipientName = recipientName;
     this.link = link;
   }
 
   async sendEmail() {
     try {
-      const recipients = [new Recipient(this.recipientEmail, "Usuário")];
+      const sentFrom = new Sender("MS_zo0u4y@vdevapi.online", "Your name");
+
+      const recipients = [new Recipient(this.recipientEmail, "Recipient Name")];
 
       const personalization = [
         {
-          email: this.recipientEmail,
-          data: {
-            link: this.link,
-          },
+          link: this.link,
         },
       ];
 
       const emailParams = new EmailParams()
-        .setFrom("MS_zo0u4y@vdevapi.online")
-        .setRecipients(recipients)
-        .setSubject("Assunto")
+        .setFrom(sentFrom)
+        .setTo(recipients)
+        .setReplyTo(sentFrom)
         .setTemplateId("z3m5jgrnqnzldpyo")
-        .setPersonalization(personalization);
+        .setPersonalization(personalization)
+        .setSubject("REDEIFINIÇÃO DE SENHA");
 
-      const response = await this.mailerSend.send(emailParams);
+      const response = await this.mailerSend.email.send(emailParams);
       return response;
     } catch (error) {
       console.error("Erro ao enviar e-mail:", error);
@@ -42,4 +39,4 @@ class MailerSendService {
   }
 }
 
-module.exports = MailerSendService;
+export default MailerSendService;
