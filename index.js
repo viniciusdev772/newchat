@@ -530,11 +530,11 @@ wss.on("connection", async (ws, req) => {
   const params = url.searchParams;
 
   // Extrair os parâmetros grupo e uid
-  grupo = params.get("grupo");
-  uid = params.get("uid");
 
   //verificar se parametros foram passados params.get("grupo") && params.get("uid")
   if (params.get("grupo") && params.get("uid")) {
+    grupo = params.get("grupo");
+    uid = params.get("uid");
   } else if (req.headers["grupo"] && req.headers["uid"]) {
     grupo = req.headers["grupo"];
     uid = req.headers["uid"];
