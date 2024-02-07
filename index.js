@@ -462,7 +462,7 @@ app.get("/redefinir-senha/:token", async (req, res) => {
 
 app.get("/check_jwt", checker);
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 app.post("/api/redefinir-senha/:token", async (req, res) => {
   try {
@@ -472,13 +472,19 @@ app.post("/api/redefinir-senha/:token", async (req, res) => {
     const resetSenhaEntry = await ResetSenha.findOne({ where: { token } });
 
     if (!resetSenhaEntry || resetSenhaEntry.expiresAt < new Date()) {
-      return res.status(401).json({ sucesso: false, message: "Token inválido ou expirado." });
+      return res
+        .status(401)
+        .json({ sucesso: false, message: "Token inválido ou expirado." });
     }
 
-    const usuario = await Usuario.findOne({ where: { uid: resetSenhaEntry.userUid } });
+    const usuario = await Usuario.findOne({
+      where: { uid: resetSenhaEntry.userUid },
+    });
 
     if (!usuario) {
-      return res.status(404).json({ sucesso: false, message: "Usuário não encontrado." });
+      return res
+        .status(404)
+        .json({ sucesso: false, message: "Usuário não encontrado." });
     }
 
     const senhaCriptografada = await bcrypt.hash(novaSenha, 10);
@@ -490,7 +496,10 @@ app.post("/api/redefinir-senha/:token", async (req, res) => {
     res.json({ sucesso: true, message: "Senha redefinida com sucesso!" });
   } catch (error) {
     console.error("Erro ao redefinir a senha:", error);
-    res.status(500).json({ sucesso: false, message: "Erro ao redefinir a senha. Tente novamente mais tarde." });
+    res.status(500).json({
+      sucesso: false,
+      message: "Erro ao redefinir a senha. Tente novamente mais tarde.",
+    });
   }
 });
 app.get("/novidades", verificarToken, async (req, res) => {
@@ -514,13 +523,24 @@ wss.on("connection", async (ws, req) => {
   // const grupo = req.headers["grupo"];
   // const uid = req.headers["uid"];
 
+  const { grupo, uid } = "";
   //obter dos parametros
   const url = new URL(req.url, `http://${req.headers.host}`);
   const params = url.searchParams;
 
   // Extrair os parâmetros grupo e uid
-  const grupo = params.get("grupo");
-  const uid = params.get("uid");
+  grupo = params.get("grupo");
+  uid = params.get("uid");
+
+  //verificar se parametros foram passados params.get("grupo") && params.get("uid")
+  if (params.get("grupo") && params.get("uid")) {
+  } else if (req.headers["grupo"] && req.headers["uid"]) {
+    grupo = req.headers["grupo"];
+    uid = req.headers["uid"];
+  } else {
+    console.log("Grupo e UID não fornecidos.");
+    ws.close();
+  }
 
   console.log("Grupo: ", grupo);
   console.log("UID: ", uid);
