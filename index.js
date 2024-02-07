@@ -523,7 +523,8 @@ wss.on("connection", async (ws, req) => {
   // const grupo = req.headers["grupo"];
   // const uid = req.headers["uid"];
 
-  const { grupo, uid } = "";
+  let grupo,
+    uid = "";
   //obter dos parametros
   const url = new URL(req.url, `http://${req.headers.host}`);
   const params = url.searchParams;
