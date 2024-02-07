@@ -539,7 +539,7 @@ wss.on("connection", async (ws, req) => {
     uid = req.headers["uid"];
   } else {
     console.log("Grupo e UID não fornecidos.");
-    ws.close();
+    //ws.close();
   }
 
   console.log("Grupo: ", grupo);
