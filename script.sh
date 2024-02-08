@@ -17,9 +17,9 @@ if [ "$alteracoes" != "Already up to date." ]; then
     # Instale as dependências com npm install
     npm install
     pm2 delete all
-    pm2 start npm --name "CHAT SERVER" -- run start 
+    #pm2 start npm --name "CHAT SERVER" -- run start 
+    pm2 start  --name "CHAT SERVER" index.js -i max
     pm2 save
-    pm2 startup 
 
     # Inicie o aplicativo com npm start
     npm start
