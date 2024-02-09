@@ -403,6 +403,10 @@ app.post("/chamado", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
+  //logar no console quem se conectou ao servidor
+  console.log("Conexão ao servidor de " + req.ip + " " + req.hostname);
+  //mostrar user agent
+  console.log("User Agent: " + req.get("User-Agent"));
   res.send("SERVER OK");
 });
 
