@@ -20,7 +20,7 @@ const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // janela de tempo de 15 minutos
-  max: 100, // limite de 100 requests por janela de tempo por IP
+  max: 50, // limite de 100 requests por janela de tempo por IP
   standardHeaders: true, // retorna informações de limitação de taxa nos cabeçalhos `RateLimit-*`
   legacyHeaders: false, // desativa os cabeçalhos `X-RateLimit-*`
   handler: (req, res) => {
