@@ -16,6 +16,26 @@ const app = express();
 const PORT = 3001;
 const path = require("path");
 
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // janela de tempo de 15 minutos
+  max: 100, // limite de 100 requests por janela de tempo por IP
+  standardHeaders: true, // retorna informações de limitação de taxa nos cabeçalhos `RateLimit-*`
+  legacyHeaders: false, // desativa os cabeçalhos `X-RateLimit-*`
+  handler: (req, res) => {
+    // Mensagem de resposta quando o limite é excedido
+    res.status(429).json({
+      message:
+        "Muitas requisições feitas deste IP, tente novamente mais tarde.",
+    });
+  },
+});
+
+app.set("trust proxy", true); // habilita o cabeçalho `X-Forwarded-For` para o endereço IP do cliente
+
+app.use(limiter);
+
 const JWT = require("./models/JWT");
 
 const Rastrear = require("./models/Rastrear");
@@ -403,8 +423,9 @@ app.post("/chamado", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
+  const realIp = req.headers["cf-connecting-ip"] || req.ip;
   //logar no console quem se conectou ao servidor
-  console.log("Conexão ao servidor de " + req.ip + " " + req.hostname);
+  console.log("Conexão ao servidor de " + realIp);
   //mostrar user agent
   console.log("User Agent: " + req.get("User-Agent"));
   res.send("SERVER OK");
