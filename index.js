@@ -26,10 +26,13 @@ const limiter = rateLimit({
   handler: (req, res) => {
     console.log("Limite de taxa excedido. para o IP: ", req.ip);
     // Mensagem de resposta quando o limite é excedido
-    res.status(429).json({
-      message:
-        "Muitas requisições feitas deste IP, tente novamente mais tarde.",
-    });
+    // res.status(429).json({
+    //   message:
+    //     "Muitas requisições feitas deste IP, tente novamente mais tarde.",
+    // });
+
+    //recusar a conexão
+    res.status(429).end();
   },
 });
 
