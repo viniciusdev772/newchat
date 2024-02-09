@@ -24,6 +24,7 @@ const limiter = rateLimit({
   standardHeaders: true, // retorna informações de limitação de taxa nos cabeçalhos `RateLimit-*`
   legacyHeaders: false, // desativa os cabeçalhos `X-RateLimit-*`
   handler: (req, res) => {
+    console.log("Limite de taxa excedido. para o IP: ", req.ip);
     // Mensagem de resposta quando o limite é excedido
     res.status(429).json({
       message:
