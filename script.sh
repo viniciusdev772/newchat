@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Defina o caminho do seu repositório local
-caminho_repositorio="/home/chat.viniciusdev.com.br/public_html"
+caminho_repositorio="/home/cdn.viniciusdev.com.br/public_html"
 
 # Navegue até o diretório do repositório
 cd $caminho_repositorio
@@ -16,13 +16,16 @@ if [ "$alteracoes" != "Already up to date." ]; then
 
     # Instale as dependências com npm install
     npm install
-    pm2 delete all
-    #pm2 start npm --name "CHAT SERVER" -- run start 
-    pm2 start  --name "CHAT SERVER" index.js -i max
+
+    # Deleta somente o chat server do PM2
+    pm2 delete "CHAT SERVER"
+
+    # Inicia o chat server com PM2
+    pm2 start --name "CHAT SERVER" index.js -i max
     pm2 save
 
-    # Inicie o aplicativo com npm start
-    npm start
+    # O comando npm start não é necessário se você já está usando pm2 para gerenciar os processos
+    # npm start
 else
     echo "Nenhuma alteração no repositório."
 fi
