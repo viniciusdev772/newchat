@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Defina o caminho do seu repositório local
-caminho_repositorio="/home/cdn.viniciusdev.com.br/public_html"
+caminho_repositorio="/home/chat.viniciusdev.com.br/public_html"
 
 # Navegue até o diretório do repositório
 cd $caminho_repositorio
